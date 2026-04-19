@@ -78,6 +78,9 @@ const StatusBar = () => {
                     <NavLink to='/admin/sales' className={linkClass}>
                         Sales Report
                     </NavLink>
+                    <NavLink to='/admin/inventory-management' className={linkClass}>
+                        Inventory
+                    </NavLink>
                     
                     <NavLink to='/admin/accounts' className={linkClass}>
                         Accounts

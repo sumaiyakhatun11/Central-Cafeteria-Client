@@ -6,6 +6,7 @@ const AddFoodModal = ({ isOpen, onClose, onFoodAdded, categories }) => {
     const [formData, setFormData] = useState({
         name: '',
         price: '',
+        stock: '',
         unit: '',
         image: '',
         category: []
@@ -93,6 +94,10 @@ const AddFoodModal = ({ isOpen, onClose, onFoodAdded, categories }) => {
                     <div className="mb-4">
                         <label className="block text-gray-700">Price</label>
                         <input type="number" name="price" value={formData.price} onChange={handleInputChange} className="input input-bordered w-full" required />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Initial Stock</label>
+                        <input type="number" min="0" name="stock" value={formData.stock} onChange={handleInputChange} className="input input-bordered w-full" required />
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700">Unit</label>

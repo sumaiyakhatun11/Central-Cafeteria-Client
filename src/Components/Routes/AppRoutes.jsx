@@ -23,6 +23,7 @@ import AdminSnacks from '../Admin/Home/Snacks.jsx';
 import AdminQueue from '../Admin/Queue/Queue.jsx';
 import SalesReport from '../Admin/SalesReport/SalesReport.jsx';
 import Accounts from '../Admin/Accounts/Accounts.jsx';
+import StockAlert from '../Admin/StockAlert/StockAlert.jsx';
 
 const CATEGORY_CONFIG = {
   breakfast: { title: 'Breakfast Menu' },
@@ -136,6 +137,14 @@ const router = createBrowserRouter([
           {
             path: 'sales',
             element: <SalesReport />,
+          },
+          {
+            path: 'stock-alert',
+            element: <StockAlert />,
+          },
+          {
+            path: 'inventory-management',
+            element: <StockAlert />,
           },
           {
             path: 'queue',
