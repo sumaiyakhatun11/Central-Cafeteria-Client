@@ -202,15 +202,15 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const totalInCoins = totalPrice / coinValue;
 
     return (
-        <div className={`fixed top-0 right-0 flex flex-col justify-between max-h-screen min-h-screen overflow-y-scroll w-96 bg-white/90 shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className={`fixed top-0 right-0 flex flex-col justify-between max-h-screen min-h-screen overflow-y-scroll w-96 text-black bg-white/90 shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
 
             <div className="p-4 overflow-y-auto h-[calc(100%-200px)]">
                 <div className=" flex justify-between items-center border-b mb-5">
                     <h2 className="text-xl font-semibold">Your Cart</h2>
                     <div className="flex gap-2">
-                        <button onClick={resetCart} className="btn btn-sm bg-gray-200 hover:bg-gray-300">Reset Cart</button>
-                        <button onClick={onClose} className="text-xl text-gray-500 hover:text-red-500">×</button>
+                        <button onClick={resetCart} className="btn btn-sm bg-gray-200 dark:text-gray-800 hover:bg-gray-300">Reset Cart</button>
+                        <button onClick={onClose} className="text-xl text-gray-500  hover:text-red-500">×</button>
                     </div>
                 </div>
                 {loading ? (

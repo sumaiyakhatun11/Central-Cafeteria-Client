@@ -52,7 +52,10 @@ const Home = () => {
 
     return (
         <AddToCartContext.Provider value={handleAddToCart}>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4
+                bg-[linear-gradient(rgba(255,255,255,0.9),rgba(255,255,255,0.9)),url('https://i.ibb.co.com/MxKKQLqF/istockphoto-2220875039-612x612.jpg')] 
+                bg-repeat 
+                bg-[length:200px_200px]">
                 {/* Mobile Navigation */}
                 <div className="md:hidden flex justify-around px-4 py-2 bg-red-100 rounded shadow">
                     {navItems.map(({ path, label }) => (
@@ -74,8 +77,12 @@ const Home = () => {
                     ))}
                     <div className='col-span-2 text-center rounded-lg flex flex-col justify-center items-center relative min-h-[200px] overflow-hidden group'>
                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-110" style={{ backgroundImage: `url(https://i.ibb.co.com/yn3GCgfm/Chat-GPT-Image-Oct-20-2025-07-48-52-PM.png)` }}></div>
+                        
+                        {/* Shimmer Effect overlay */}
+                        <div className="absolute inset-0 animate-shimmer opacity-30 z-10 pointer-events-none"></div>
+                        
                         <div className="absolute inset-0 bg-black/50 rounded-lg"></div>
-                        <div className="relative z-10 text-white">
+                        <div className="relative z-20 text-white">
                             <h2 className='text-3xl font-bold'>Host Your Event!</h2>
                             <p className="mb-4">Book our space for your next celebration.</p>
                             <button onClick={() => user ? setIsModalOpen(true) : nav('/login')} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors tinos-regular">Book Now</button>
@@ -90,10 +97,10 @@ const Home = () => {
             </div>
 
             {/* Render the new Event Booking Modal component */}
-            <EventBookingModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                user={user} 
+            <EventBookingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                user={user}
             />
         </AddToCartContext.Provider>
     );

@@ -5,6 +5,17 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const isAdminLikeUser = (candidate) => {
+    if (!candidate) return false;
+
+    return (
+        candidate.role === 'admin' ||
+        candidate.isadmin === true ||
+        candidate.isAdmin === true ||
+        candidate.isSuperAdmin === true
+    );
+};
+
 const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -37,7 +48,13 @@ const Login = () => {
 
                     if (response.ok) {
                         login(data.user);
-                        navigate('/');
+                        const loggedInUser = data.user || {};
+                        const isAdminUser =
+                            loggedInUser.role === 'admin' ||
+                            loggedInUser.isadmin === true ||
+                            loggedInUser.isAdmin === true ||
+                            loggedInUser.isSuperAdmin === true;
+                        navigate(isAdminUser ? '/admin/accounts' : '/');
                     } else {
                         toast.error(data.message || 'QR Login failed.');
                     }
@@ -63,6 +80,23 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Unified login flow: if identifier is an email, attempt admin auth first.
+            if (formData.identifier.includes('@')) {
+                const adminResponse = await fetch('https://central-cafetaria-server.vercel.app/adminlogin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: formData.identifier, password: formData.password })
+                });
+
+                const adminData = await adminResponse.json();
+
+                if (adminResponse.ok && adminData?.admin) {
+                    login(adminData.admin);
+                    navigate('/admin/accounts');
+                    return;
+                }
+            }
+
             const response = await fetch('https://central-cafetaria-server.vercel.app/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -73,7 +107,7 @@ const Login = () => {
 
             if (response.ok) {
                 login(data.user);
-                navigate('/');
+                navigate(isAdminLikeUser(data.user) ? '/admin/accounts' : '/');
             } else {
                 console.error('Login failed:', data.message);
                 toast.error(data.message);
@@ -85,12 +119,12 @@ const Login = () => {
     };
 
     return (
-        <div className='w-full h-screen flex justify-center items-center relative overflow-hidden'>
+        <div className='w-full text-black h-screen flex justify-center items-center relative overflow-hidden'>
             <div
                 className='absolute inset-0 bg-cover opacity-50 bg-center filter blur-sm z-0'
                 style={{ backgroundImage: `url(https://i.ibb.co/fzngpwS3/Whats-App-Image-2025-06-02-at-15-35-28-8e7f8eb2.jpg)` }}
             />
-            <div className='absolute inset-0 bg-white/70 z-10'></div>
+            <div className='absolute inset-0 bg-white/30 z-10'></div>
 
             <div className='z-20 bg-white p-10 rounded-lg shadow-xl w-full max-w-md'>
                 <h2 className='text-3xl border-b-2 pb-2 px-5 border-gray-600 tinos-regular mb-8'>Login</h2>

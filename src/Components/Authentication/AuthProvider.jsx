@@ -3,6 +3,21 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 // Create the context
 const AuthContext = createContext();
 
+const normalizeUser = (rawUser) => {
+    if (!rawUser) return null;
+
+    const isAdminLike =
+        rawUser.role === 'admin' ||
+        rawUser.isadmin === true ||
+        rawUser.isAdmin === true ||
+        rawUser.isSuperAdmin === true;
+
+    return {
+        ...rawUser,
+        role: isAdminLike ? 'admin' : (rawUser.role || 'user')
+    };
+};
+
 // Hook to access AuthContext easily
 export const useAuth = () => useContext(AuthContext);
 
@@ -15,15 +30,16 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = localStorage.getItem('authUser');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            setUser(normalizeUser(JSON.parse(storedUser)));
         }
         setLoading(false);
     }, []);
 
     // Login function (you call this after successful fetch login)
     const login = (userData) => {
-        localStorage.setItem('authUser', JSON.stringify(userData));
-        setUser(userData);
+        const normalizedUser = normalizeUser(userData);
+        localStorage.setItem('authUser', JSON.stringify(normalizedUser));
+        setUser(normalizedUser);
     };
 
     // Logout function
@@ -33,8 +49,9 @@ const AuthProvider = ({ children }) => {
     };
 
     const updateUser = (newUserData) => {
-        localStorage.setItem('authUser', JSON.stringify(newUserData));
-        setUser(newUserData);
+        const normalizedUser = normalizeUser(newUserData);
+        localStorage.setItem('authUser', JSON.stringify(normalizedUser));
+        setUser(normalizedUser);
     };
 
     const value = { user, login, logout, isAuthenticated: !!user, updateUser };

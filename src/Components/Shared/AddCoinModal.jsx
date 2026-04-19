@@ -124,7 +124,7 @@ const AddCoinModal = ({ isOpen, onClose }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg max-h-screen overflow-y-scroll w-full max-w-4xl">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold">Add Coins</h2>
+                    <h2 className="text-2xl text-red-500 font-bold">Add Coins</h2>
                     <button onClick={handleClose} className="btn bg-blue-400 text-white font-bold px-2"><FaArrowRight /></button>
                 </div>
                 
@@ -185,14 +185,14 @@ const AddCoinModal = ({ isOpen, onClose }) => {
                         </div>
                     </div>
                 ) : (
-                    <div>
+                    <div className='text-red-500'>
                         <h3 className="text-xl font-bold mb-4">Coin Request History</h3>
                         {coinHistory.length === 0 ? (
                             <p className="text-center text-gray-500">No request history available.</p>
                         ) : (
                             <div className="flex flex-col gap-4">
                                 {coinHistory.map((request, index) => (
-                                    <div key={index} className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                                    <div key={index} className="bg-gray-100 text-gray-700 p-4 rounded-lg flex justify-between items-center">
                                         <div>
                                             <p><strong>Amount:</strong> {request.amount} coins</p>
                                             <p><strong>Date:</strong> {new Date(request.requestedAt).toLocaleDateString()}</p>

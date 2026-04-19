@@ -48,14 +48,14 @@ const FoodCategory = ({ title, items }) => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h2 className="text-3xl text-yellow-100 font-bold mb-6 text-center">{title}</h2>
+            <h2 className="text-3xl text-yellow-500 font-bold mb-6 text-center">{title}</h2>
             
             {/* Desktop View */}
-            <div className="lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden h-[110vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-red-100">
+            <div className="lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden max-h-[110vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-red-100">
                 {internalItems.map((item, index) => {
                     const isAvailable = item.availability && item.availability[actualCategory];
                     return (
-                        <div key={index} className="bg-yellow-100/70 rounded-lg shadow-md hover:shadow-lg p-2 transition-shadow group relative">
+                        <div key={index} className="bg-yellow-400/70 rounded-lg shadow-md hover:shadow-lg p-2 transition-shadow group relative">
                             {!isAvailable && (
                                 <div className="absolute inset-0 bg-red-950/40 flex items-center justify-center rounded-lg z-10">
                                     <span className="text-red-600 bg-white/90 px-5 py-2 text-xl font-bold">Not Available</span>
@@ -74,7 +74,7 @@ const FoodCategory = ({ title, items }) => {
                             <div className="p-4">
                                 <h3 className="text-xl font-bold text-red-800 mb-2">{item.name}</h3>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-lg font-semibold text-black">{item.price} tk</span>
+                                    <span className="text-lg font-semibold text-black">{item.price} <span className='text-2xl'>৳</span></span>
                                 </div>
                                 <p className="text-black mt-2">Unit: {item.unit}</p>
                                 <button
@@ -94,7 +94,7 @@ const FoodCategory = ({ title, items }) => {
                 {internalItems.map((item, index) => {
                     const isAvailable = item.availability && item.availability[actualCategory];
                     return (
-                        <div key={index} className='bg-yellow-100/70 rounded-md relative flex gap-5 shadow-sm hover:shadow-md p-3'>
+                        <div key={index} className='bg-yellow-400/70 rounded-md relative flex gap-5 shadow-sm hover:shadow-md p-3'>
                             {!isAvailable && (
                                 <div className="absolute inset-0 bg-red-950/40 flex items-center justify-center rounded-lg z-10">
                                     <span className="text-red-600 bg-white/90 px-2 py-0  text-xl font-bold">Not Available</span>

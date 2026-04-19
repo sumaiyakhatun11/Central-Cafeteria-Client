@@ -130,7 +130,7 @@ const Registration = () => {
     };
 
     return (
-        <div className='w-full py-10 min-h-screen flex justify-center items-center relative overflow-hidden'>
+        <div className='w-full py-10 min-h-screen flex text-black justify-center items-center relative overflow-hidden'>
             <div
                 className='absolute inset-0 bg-cover opacity-50 bg-center filter blur-sm z-0'
                 style={{ backgroundImage: `url(https://i.ibb.co/fzngpwS3/Whats-App-Image-2025-06-02-at-15-35-28-8e7f8eb2.jpg)` }}
