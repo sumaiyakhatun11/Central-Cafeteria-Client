@@ -1,17 +1,33 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AddToCartContext } from './Home';
+import { SearchContext } from './SearchContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const FoodCategory = ({ title, items }) => {
     const handleAddToCart = useContext(AddToCartContext);
+    const { searchQuery } = useContext(SearchContext);
     const actualCategory = title.split(' ')[0].toLowerCase(); // e.g., "Breakfast Menu" -> "breakfast"
     const [internalItems, setInternalItems] = useState(items);
+    const [filteredItems, setFilteredItems] = useState(items);
 
     useEffect(() => {
         setInternalItems(items);
     }, [items]);
+
+    useEffect(() => {
+        // Filter items based on search query
+        if (!searchQuery.trim()) {
+            setFilteredItems(internalItems);
+        } else {
+            const query = searchQuery.toLowerCase();
+            const filtered = internalItems.filter(item =>
+                item.name.toLowerCase().includes(query)
+            );
+            setFilteredItems(filtered);
+        }
+    }, [searchQuery, internalItems]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,7 +53,25 @@ const FoodCategory = ({ title, items }) => {
     }, [actualCategory]);
 
 
-    if (!internalItems) {
+    if (!filteredItems) {
+        return (
+            <div className="container mx-auto px-4 py-8">
+                <h2 className="text-3xl font-bold mb-6 text-center">{title}</h2>
+                <p className='text-center'>No items available in this category at the moment.</p>
+            </div>
+        );
+    }
+
+    if (filteredItems.length === 0 && searchQuery.trim()) {
+        return (
+            <div className="container mx-auto px-4 py-8">
+                <h2 className="text-3xl text-yellow-500 font-bold mb-6 text-center">{title}</h2>
+                <p className='text-center text-lg text-gray-600'>No food items match "<strong>{searchQuery}</strong>"</p>
+            </div>
+        );
+    }
+
+    if (filteredItems.length === 0) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <h2 className="text-3xl font-bold mb-6 text-center">{title}</h2>
@@ -52,7 +86,7 @@ const FoodCategory = ({ title, items }) => {
             
             {/* Desktop View */}
             <div className="lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden max-h-[110vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-red-600 scrollbar-track-red-100">
-                {internalItems.map((item, index) => {
+                {filteredItems.map((item, index) => {
                     const isAvailable = item.availability && item.availability[actualCategory];
                     return (
                         <div key={index} className="bg-yellow-400/70 rounded-lg shadow-md hover:shadow-lg p-2 transition-shadow group relative">
@@ -91,7 +125,7 @@ const FoodCategory = ({ title, items }) => {
 
             {/* Mobile View */}
             <div className='lg:hidden flex flex-col gap-5'>
-                {internalItems.map((item, index) => {
+                {filteredItems.map((item, index) => {
                     const isAvailable = item.availability && item.availability[actualCategory];
                     return (
                         <div key={index} className='bg-yellow-400/70 rounded-md relative flex gap-5 shadow-sm hover:shadow-md p-3'>

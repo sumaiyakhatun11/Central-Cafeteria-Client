@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../Authentication/AuthProvider';
 import EventBookingModal from './EventBookingModal'; // Import the new component
 import { toast } from 'react-toastify';
+import { SearchContext } from './SearchContext';
 
 
 export const AddToCartContext = React.createContext(null); // Context to pass the function
@@ -12,6 +13,7 @@ const Home = () => {
     const { user } = useAuth();
     const nav = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const navItems = [
         { path: "/breakfast", label: "Breakfast", image: "/breakfast.png" },
@@ -52,10 +54,11 @@ const Home = () => {
 
     return (
         <AddToCartContext.Provider value={handleAddToCart}>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4
-                bg-[linear-gradient(rgba(255,255,255,0.9),rgba(255,255,255,0.9)),url('https://i.ibb.co.com/MxKKQLqF/istockphoto-2220875039-612x612.jpg')] 
-                bg-repeat 
-                bg-[length:200px_200px]">
+            <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4
+                    bg-[linear-gradient(rgba(255,255,255,0.9),rgba(255,255,255,0.9)),url('https://i.ibb.co.com/MxKKQLqF/istockphoto-2220875039-612x612.jpg')] 
+                    bg-repeat 
+                    bg-[length:200px_200px]">
                 {/* Mobile Navigation */}
                 <div className="md:hidden flex justify-around px-4 py-2 bg-red-100 rounded shadow">
                     {navItems.map(({ path, label }) => (
@@ -92,6 +95,23 @@ const Home = () => {
 
                 {/* Content Area */}
                 <div className="md:col-span-3 p-4">
+                    {/* Search Food Section */}
+                    <div className="mb-6 bg-white rounded-lg shadow-md p-4">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">Search Food</h3>
+                        <div className="flex gap-2 flex-col sm:flex-row">
+                            <input
+                                type="text"
+                                placeholder="Search for food items..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-800"
+                            />
+                            <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors tinos-regular whitespace-nowrap">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
                     <Outlet />
                 </div>
             </div>
@@ -102,6 +122,7 @@ const Home = () => {
                 onClose={() => setIsModalOpen(false)}
                 user={user}
             />
+            </SearchContext.Provider>
         </AddToCartContext.Provider>
     );
 };
