@@ -37,6 +37,7 @@ const Users = () => {
     }, []);
 
     const handleVerify = async () => {
+        if (!selectedUser) return;
         try {
             const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}/verify`, {
                 method: 'PATCH',
@@ -54,6 +55,29 @@ const Users = () => {
         } catch (err) {
             console.error('Verification failed:', err);
             toast.error('Verification failed.');
+        }
+    };
+
+    const handleUnverify = async () => {
+        if (!selectedUser) return;
+
+        try {
+            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}/verify`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ verified: false })
+            });
+
+            if (res.ok) {
+                toast.success('User marked as not verified!');
+                fetchUsers();
+                setModalOpen(false);
+            } else {
+                toast.error('Update failed.');
+            }
+        } catch (err) {
+            console.error('Update failed:', err);
+            toast.error('Update failed.');
         }
     };
 
@@ -178,6 +202,7 @@ const Users = () => {
                     onClose={() => setModalOpen(false)}
                     user={selectedUser}
                     onVerify={handleVerify}
+                    onUnverify={handleUnverify}
                     onPrivilegeToggle={handlePrivilegeToggle}
                     onDelete={handleDeleteUser}
                 />

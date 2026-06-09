@@ -5,6 +5,8 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const isAdminLikeUser = (candidate) => {
     if (!candidate) return false;
 
@@ -38,7 +40,7 @@ const Login = () => {
                 setShowScanner(false);
                 
                 try {
-                    const response = await fetch('https://central-cafetaria-server.vercel.app/login-qr', {
+                    const response = await fetch(`${API_BASE_URL}/login-qr`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ qrCodeString: decodedText })
@@ -82,7 +84,7 @@ const Login = () => {
         try {
             // Unified login flow: if identifier is an email, attempt admin auth first.
             if (formData.identifier.includes('@')) {
-                const adminResponse = await fetch('https://central-cafetaria-server.vercel.app/adminlogin', {
+                const adminResponse = await fetch(`${API_BASE_URL}/adminlogin`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: formData.identifier, password: formData.password })
@@ -97,7 +99,7 @@ const Login = () => {
                 }
             }
 
-            const response = await fetch('https://central-cafetaria-server.vercel.app/login', {
+            const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

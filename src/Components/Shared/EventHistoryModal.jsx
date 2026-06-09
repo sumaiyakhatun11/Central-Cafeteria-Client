@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { FaTimes, FaDownload } from 'react-icons/fa'; // Added FaDownload
 import { toast } from 'react-toastify';
 import { jsPDF } from 'jspdf'; // Import jspdf
@@ -61,6 +62,17 @@ const EventHistoryModal = ({ isOpen, onClose, userId }) => {
             fetchUserEvents();
         }
     }, [isOpen, userId]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isOpen]);
 
     // Adapted handleMakeReceipt from Admin/EventRecords.jsx
     const handleDownloadReceipt = async (event) => {
@@ -220,9 +232,9 @@ const EventHistoryModal = ({ isOpen, onClose, userId }) => {
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl transform transition-all duration-300">
+    return createPortal(
+        <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black bg-opacity-50 p-4 pt-24 md:items-center md:pt-4">
+            <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-[calc(100vh-6rem)] overflow-y-auto transform transition-all duration-300">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
                     <h2 className="text-2xl font-bold text-red-600">Your Event History</h2>
                     <button onClick={onClose} className="text-gray-500 hover:text-red-600 transition-colors">
@@ -278,7 +290,8 @@ const EventHistoryModal = ({ isOpen, onClose, userId }) => {
                     </div>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

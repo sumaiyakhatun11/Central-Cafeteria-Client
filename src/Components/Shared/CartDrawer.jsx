@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../Authentication/AuthProvider';
 import { toast } from 'react-toastify';
 
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import Spinner from './Spinner';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -14,10 +18,11 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const [coinBalance, setCoinBalance] = useState(0);
     const [coinValue, setCoinValue] = useState(5); // Default value
     const { user } = useAuth();
+    const [tableNumber, setTableNumber] = useState('');
 
     const fetchCoinBalance = async (id) => {
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${id}/coins`);
+            const res = await fetch(`${API_BASE_URL}/users/${id}/coins`);
             const data = await res.json();
             if (res.ok) {
                 setCoinBalance(data.coins);
@@ -31,7 +36,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
 
     const fetchCoinValue = async () => {
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/coin-value');
+            const res = await fetch(`${API_BASE_URL}/coin-value`);
             const data = await res.json();
             if (res.ok) {
                 setCoinValue(data.value);
@@ -44,7 +49,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     useEffect(() => {
         const fetchCoinValue = async () => {
             try {
-                const res = await fetch('https://central-cafetaria-server.vercel.app/coin-value');
+                const res = await fetch(`${API_BASE_URL}/coin-value`);
                 const data = await res.json();
                 if (res.ok) {
                     setCoinValue(data.value);
@@ -71,9 +76,20 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
         };
     }, [isOpen, userId]);
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isOpen]);
+
     const fetchPrivilegedStatus = async (id) => {
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${id}/privileged-status`);
+            const res = await fetch(`${API_BASE_URL}/users/${id}/privileged-status`);
             const data = await res.json();
             if (res.ok) {
                 setIsPrivileged(data.privileged);
@@ -90,7 +106,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const fetchCartItems = async (id) => {
         try {
             setLoading(true);
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/cart/${id}`);
+            const res = await fetch(`${API_BASE_URL}/cart/${id}`);
             const data = await res.json();
             if (res.ok) {
                 setCartItems(data.cart || []);
@@ -106,7 +122,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
 
     const resetCart = async () => {
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/cart/${userId}`, {
+            const res = await fetch(`${API_BASE_URL}/cart/${userId}`, {
                 method: 'DELETE',
             });
             if (res.ok) {
@@ -138,7 +154,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const updateCartItem = async (itemName, newUnit) => {
         setUpdatingItems(prev => ({ ...prev, [itemName]: true }));
         try {
-            const response = await fetch(`https://central-cafetaria-server.vercel.app/cart/update-unit`, {
+            const response = await fetch(`${API_BASE_URL}/cart/update-unit`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -173,16 +189,23 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
 
 
     const placeOrder = async () => {
+        // If teacher role, require table number
+        if (user && user.role === 'teacher' && (!tableNumber || tableNumber.trim() === '')) {
+            toast.error('Please enter table number for teacher orders.');
+            return;
+        }
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/order/queue`, {
+            const res = await fetch(`${API_BASE_URL}/order/queue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, usePrivilege, payWithCoins })
+                body: JSON.stringify({ userId, usePrivilege, payWithCoins, tableNumber })
             });
 
             const data = await res.json();
             if (res.ok) {
-                toast.success(`Order placed successfully! Your Queue ID is ${data.queueId}`);
+                toast.success(
+                    `Order placed! Token: ${data.token} | Position: ${data.queuePosition} | Status: ${data.status} | Est. wait: ${data.estimatedWaitingMinutes} min`
+                );
                 fetchQueue();
                 setCartItems([]);
                 onClose();
@@ -201,8 +224,8 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
 
     const totalInCoins = totalPrice / coinValue;
 
-    return (
-        <div className={`fixed top-0 right-0 flex flex-col justify-between max-h-screen min-h-screen overflow-y-scroll w-96 text-black bg-white/90 shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+    return createPortal(
+        <div className={`fixed top-0 right-0 flex flex-col justify-between max-h-screen min-h-screen overflow-y-scroll w-96 text-black bg-white/90 shadow-lg z-[90] transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
 
             <div className="p-4 overflow-y-auto h-[calc(100%-200px)]">
@@ -269,6 +292,19 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
 
                 <p className="text-lg font-semibold">Total: {totalPrice}tk</p>
 
+                {user && user.role === 'teacher' && (
+                    <div className="mt-3">
+                        <label className="block text-sm mb-1">Table Number</label>
+                        <input
+                            type="text"
+                            value={tableNumber}
+                            onChange={(e) => setTableNumber(e.target.value)}
+                            placeholder="Enter table number"
+                            className="input input-bordered w-full"
+                        />
+                    </div>
+                )}
+
                 <div className="mt-4">
                     <label className={`flex items-center gap-2 text-sm ${coinBalance <= 0 ? 'cursor-not-allowed' : ''}`}>
                         <input
@@ -293,11 +329,13 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                 <button
                     className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
                     onClick={placeOrder}
+                    disabled={user && user.role === 'teacher' && (!tableNumber || tableNumber.trim() === '')}
                 >
                     Place Order
                 </button>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

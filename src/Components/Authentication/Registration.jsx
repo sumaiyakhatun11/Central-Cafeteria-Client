@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Html5Qrcode } from 'html5-qrcode';
 import CameraModal from './CameraModal'; // Make sure the path is correct
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Registration = () => {
     const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ const Registration = () => {
         registrationNumber: '',
         email: '',
         id: '',
+        role: 'teacher',
         password: '',
         confirmPassword: '',
         qrCodeString: '',
@@ -22,6 +25,8 @@ const Registration = () => {
     const [errors, setErrors] = useState({});
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [capturingSide, setCapturingSide] = useState(null); // 'front' or 'back'
+
+    const navigate = useNavigate();
 
     // Refs for file inputs
     const frontIdRef = useRef(null);
@@ -82,23 +87,39 @@ const Registration = () => {
     
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'role') {
+            setFormData(prev => ({
+                ...prev,
+                role: value,
+                registrationNumber: value === 'student' ? prev.registrationNumber : ''
+            }));
+            return;
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const newErrors = {};
+        // Client-side required-field validation to avoid ambiguous server errors
+        const missing = [];
+        if (!formData.name) missing.push('Name');
+        if (!formData.email) missing.push('Email');
+        if (!formData.id) missing.push('ID No');
+        if (!formData.password) missing.push('Password');
+        if (formData.role === 'student' && !formData.registrationNumber) missing.push('Registration No');
+        if (!formData.idCardFrontUrl) missing.push('ID Card (Front)');
+        if (!formData.idCardBackUrl) missing.push('ID Card (Back)');
+
         if (formData.password !== formData.confirmPassword) {
-            newErrors.password = "Passwords don't match!";
-        }
-        if (!formData.idCardFrontUrl || !formData.idCardBackUrl) {
-            toast.error("Please provide images for both front and back of the ID card.");
+            setErrors({ password: "Passwords don't match!" });
+            toast.error("Passwords don't match!");
             return;
         }
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
+        if (missing.length > 0) {
+            toast.error(`Missing required: ${missing.join(', ')}`);
             return;
         }
 
@@ -109,7 +130,7 @@ const Registration = () => {
             delete submissionData.confirmPassword;
             delete submissionData.isSubmitting;
 
-            const response = await fetch(`https://central-cafetaria-server.vercel.app/register`, {
+            const response = await fetch(`${API_BASE_URL}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submissionData)
@@ -121,6 +142,7 @@ const Registration = () => {
             }
 
             toast.success('Registration successful! Your account is awaiting verification.');
+            navigate('/');
         } catch (error) {
             console.error('Registration error:', error);
             toast.error(error.message || 'Registration failed. Please try again.');
@@ -171,9 +193,30 @@ const Registration = () => {
                     </div>
 
                     <Input label="Name" type="text" name="name" value={formData.name} onChange={handleChange} />
-                    <Input label="Registration No" type="text" name="registrationNumber" value={formData.registrationNumber} onChange={handleChange} />
+
                     <Input label="Email" type="email" name="email" value={formData.email} onChange={handleChange} />
+
+                    <div className='flex flex-col justify-center items-start mb-4 w-full'>
+                        <label htmlFor="role" className='text-lg ml-3 tinos-regular'>Role</label>
+                        <select
+                            id="role"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            className='border-2 text-lg w-full py-2 px-3 focus:outline-none focus:border-gray-700 rounded mt-1 bg-white'
+                            required
+                        >
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+
+                    {formData.role === 'student' && (
+                        <Input label="Registration No" type="text" name="registrationNumber" value={formData.registrationNumber} onChange={handleChange} />
+                    )}
+
                     <Input label="ID No" type="text" name="id" value={formData.id} onChange={handleChange} />
+
                     <Input label="Password" type="password" name="password" value={formData.password} onChange={handleChange} error={errors.password} />
                     <Input label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
 

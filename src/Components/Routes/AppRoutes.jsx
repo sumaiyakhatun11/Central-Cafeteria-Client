@@ -32,10 +32,40 @@ const CATEGORY_CONFIG = {
   snacks: { title: 'Snacks Menu' },
 };
 
+const API_BASES = [
+  import.meta.env.VITE_API_URL,
+  'http://localhost:5000',
+  'https://central-cafetaria-server.vercel.app',
+].filter(Boolean);
+
+const fetchFoods = async () => {
+  let lastError = null;
+
+  for (const baseUrl of API_BASES) {
+    try {
+      const response = await fetch(`${baseUrl}/foods`);
+
+      if (!response.ok) {
+        lastError = new Error(`HTTP ${response.status} from ${baseUrl}`);
+        continue;
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError || new Error('Failed to fetch foods');
+};
+
 const loadCategoryItems = async (category = 'breakfast') => {
   const normalizedCategory = String(category || 'breakfast').toLowerCase();
-  const res = await fetch('https://central-cafetaria-server.vercel.app/foods');
-  const allFood = await res.json();
+  const allFood = await fetchFoods().catch((error) => {
+    console.error('Error loading foods for category menu:', error);
+    return [];
+  });
+
   const items = allFood.filter((item) => {
     const categoryValue = item?.category;
 

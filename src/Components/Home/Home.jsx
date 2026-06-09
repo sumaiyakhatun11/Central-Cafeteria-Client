@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../Authentication/AuthProvider';
@@ -14,6 +14,8 @@ const Home = () => {
     const nav = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [recommendedItems, setRecommendedItems] = useState([]);
+    const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
 
     const navItems = [
         { path: "/breakfast", label: "Breakfast", image: "/breakfast.png" },
@@ -21,6 +23,75 @@ const Home = () => {
         { path: "/snacks", label: "Snacks", image: "/snacks.jpg" },
         { path: "/dinner", label: "Dinner", image: "/dinner.png" },
     ];
+
+    const getPreferredCategories = () => {
+        const hour = new Date().getHours();
+
+        if (hour >= 5 && hour < 10) return ['breakfast', 'snacks'];
+        if (hour >= 10 && hour < 15) return ['lunch', 'snacks'];
+        if (hour >= 15 && hour < 19) return ['snacks', 'lunch'];
+        return ['dinner', 'snacks'];
+    };
+
+    const buildRecommendations = (foods) => {
+        const query = searchQuery.trim().toLowerCase();
+        const preferredCategories = getPreferredCategories();
+
+        const scoredFoods = foods.map((food) => {
+            const rating = Number(food.rating || 0);
+            const categories = Array.isArray(food.category) ? food.category : [];
+
+            let score = rating * 10;
+
+            if (categories.some((category) => preferredCategories.includes(category))) {
+                score += 20;
+            }
+
+            if (query) {
+                const nameMatches = food.name?.toLowerCase().includes(query);
+                const categoryMatches = categories.some((category) => category.includes(query));
+                score += nameMatches ? 25 : 0;
+                score += categoryMatches ? 10 : 0;
+            }
+
+            if (rating >= 4.5) {
+                score += 10;
+            }
+
+            if (Number(food.price) <= 20) {
+                score += 5;
+            }
+
+            return { ...food, score };
+        });
+
+        return scoredFoods
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 4);
+    };
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            try {
+                setIsLoadingRecommendations(true);
+                const response = await fetch('/Food.json');
+                const foods = await response.json();
+
+                if (Array.isArray(foods)) {
+                    setRecommendedItems(buildRecommendations(foods));
+                } else {
+                    setRecommendedItems([]);
+                }
+            } catch (error) {
+                console.error('Recommendation fetch error:', error);
+                setRecommendedItems([]);
+            } finally {
+                setIsLoadingRecommendations(false);
+            }
+        };
+
+        fetchRecommendations();
+    }, [searchQuery]);
 
     const handleAddToCart = async (item, category) => {
         if (!user || !user.id) {
@@ -50,6 +121,16 @@ const Home = () => {
             console.error('Add to cart error:', error);
             toast.error('Something went wrong.');
         }
+    };
+
+    const recommendationCategoryLabel = (item) => {
+        if (!Array.isArray(item.category) || item.category.length === 0) {
+            return 'Recommended';
+        }
+
+        return item.category
+            .map((category) => category.charAt(0).toUpperCase() + category.slice(1))
+            .join(' · ');
     };
 
     return (
@@ -113,6 +194,65 @@ const Home = () => {
                     </div>
 
                     <Outlet />
+
+                    {/* AI Generated Recommendations */}
+                    <div className="mt-6 mb-6 rounded-2xl border border-red-200 bg-gradient-to-br from-white via-red-50 to-red-100 p-4 shadow-md">
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                            <div>
+                                <h3 className="text-2xl font-bold text-red-700">AI Generated Recommendation</h3>
+                                <p className="text-sm text-gray-600">Smart picks based on time of day, rating, price, and your search.</p>
+                            </div>
+                            <div className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                                Smart Picks
+                            </div>
+                        </div>
+
+                        {isLoadingRecommendations ? (
+                            <p className="text-gray-600">Generating recommendations...</p>
+                        ) : recommendedItems.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {recommendedItems.map((item) => (
+                                    <motion.div
+                                        key={item.name}
+                                        whileHover={{ scale: 1.02 }}
+                                        transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+                                        className="overflow-hidden rounded-xl bg-white shadow-sm border border-red-100"
+                                    >
+                                        <div className="flex gap-3 p-3">
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="h-20 w-20 rounded-lg object-cover"
+                                                onError={(e) => {
+                                                    e.target.src = '/placeholder-food.jpg';
+                                                }}
+                                            />
+                                            <div className="flex-1">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div>
+                                                        <h4 className="text-lg font-bold text-gray-900">{item.name}</h4>
+                                                        <p className="text-xs font-semibold text-red-700">{recommendationCategoryLabel(item)}</p>
+                                                    </div>
+                                                    <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-700">
+                                                        {Number(item.rating || 0).toFixed(1)} ★
+                                                    </span>
+                                                </div>
+                                                <p className="mt-2 text-sm text-gray-600">Price: {item.price} tk</p>
+                                                <button
+                                                    onClick={() => handleAddToCart(item, Array.isArray(item.category) ? item.category[0] : 'recommended')}
+                                                    className="mt-3 inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
+                                                >
+                                                    Add to Cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-600">No recommendations available right now.</p>
+                        )}
+                    </div>
                 </div>
             </div>
 

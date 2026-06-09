@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useAuth } from '../Authentication/AuthProvider';
@@ -55,6 +56,17 @@ const AddCoinModal = ({ isOpen, onClose }) => {
             }
         };
     }, [view, user, isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isOpen]);
 
     const resetForm = () => {
         setFormData({ amount: '', receiptImageUrl: '' });
@@ -120,9 +132,9 @@ const AddCoinModal = ({ isOpen, onClose }) => {
     };
 
     if (!isOpen) return null;
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg max-h-screen overflow-y-scroll w-full max-w-4xl">
+    return createPortal(
+        <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black bg-opacity-50 p-4 pt-24 md:items-center md:pt-4">
+            <div className="bg-white p-6 rounded-lg w-full max-w-4xl max-h-[calc(100vh-6rem)] overflow-y-auto shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl text-red-500 font-bold">Add Coins</h2>
                     <button onClick={handleClose} className="btn bg-blue-400 text-white font-bold px-2"><FaArrowRight /></button>
@@ -205,7 +217,8 @@ const AddCoinModal = ({ isOpen, onClose }) => {
                     </div>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 export default AddCoinModal;

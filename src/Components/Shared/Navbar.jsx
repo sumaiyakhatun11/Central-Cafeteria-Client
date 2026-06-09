@@ -11,8 +11,8 @@ const Navbar = () => {
         }`;
 
     return (
-        <div className='sticky top-0 z-50'>
-            <div className='grid grid-cols-8 bg-red-600  w-full py-3 px-5'>
+        <div className='w-full'>
+            <div className='grid grid-cols-8 bg-red-600 w-full py-3 px-5 shadow-lg'>
                 <div className='col-span-1 flex justify-center items-center'>
                     <img className=' w-16' src="https://i.ibb.co/C5FDf1dD/image.png" alt="" />
                 </div>

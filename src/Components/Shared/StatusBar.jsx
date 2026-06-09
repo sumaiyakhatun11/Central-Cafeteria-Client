@@ -11,6 +11,8 @@ import { MdOutlinePeopleAlt } from "react-icons/md";
 import Spinner from './Spinner';
 import EventHistoryModal from './EventHistoryModal'; // Will create this file
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const StatusBar = () => {
     const { user, logout } = useAuth();
     const [cartOpen, setCartOpen] = useState(false);
@@ -37,7 +39,7 @@ const StatusBar = () => {
     const fetchQueue = async () => {
         try {
             setLoading(true);
-            const res = await fetch('https://central-cafetaria-server.vercel.app/latqueue');
+            const res = await fetch(`${API_BASE_URL}/latqueue`);
             const data = await res.json();
             if (res.ok) {
                 setQueueData(data.data || []);
@@ -61,8 +63,8 @@ const StatusBar = () => {
         return () => clearInterval(interval);
     }, []);
 
-    return (
-        <div className='relative'>
+     return (
+         <div className="w-full bg-white shadow-md">
             {user && user.role === 'admin' ? (
                 // Admin specific StatusBar content (navigation links)
                 <div className='w-full bg-red-700 py-2 px-3 md:px-5 flex flex-wrap justify-center md:justify-end gap-3 md:gap-10 items-center text-white text-sm md:text-xl'>

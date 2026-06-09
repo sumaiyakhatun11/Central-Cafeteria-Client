@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Authentication/AuthProvider';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const AdminLogin = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -22,7 +24,7 @@ const AdminLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/adminlogin', {
+            const res = await fetch(`${API_BASE_URL}/adminlogin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

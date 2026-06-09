@@ -4,6 +4,33 @@ import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
 
+const API_BASES = [
+  import.meta.env.VITE_API_URL,
+  'http://localhost:5000',
+  'https://central-cafetaria-server.vercel.app',
+].filter(Boolean);
+
+const requestJson = async (path, options = {}) => {
+  let lastError = null;
+
+  for (const baseUrl of API_BASES) {
+    try {
+      const response = await fetch(`${baseUrl}${path}`, options);
+
+      if (!response.ok) {
+        lastError = new Error(`HTTP ${response.status} from ${baseUrl}${path}`);
+        continue;
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError || new Error(`Failed to request ${path}`);
+};
+
 const SalesReport = () => {
   const [months, setMonths] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -101,17 +128,10 @@ const SalesReport = () => {
       }
 
       // Fetch both sales and event data in parallel
-      const [salesResponse, eventsResponse] = await Promise.all([
-        fetch(`https://central-cafetaria-server.vercel.app/api/sales/download?startDate=${startDate}&endDate=${endDate}`),
-        fetch(`https://central-cafetaria-server.vercel.app/api/events/range?startDate=${startDate}&endDate=${endDate}`)
+      const [salesData, eventData] = await Promise.all([
+        requestJson(`/api/sales/download?startDate=${startDate}&endDate=${endDate}`),
+        requestJson(`/api/events/range?startDate=${startDate}&endDate=${endDate}`)
       ]);
-
-      if (!salesResponse.ok || !eventsResponse.ok) {
-        throw new Error('Failed to download report data');
-      }
-
-      const salesData = await salesResponse.json();
-      const eventData = await eventsResponse.json();
 
       if (salesData.length === 0 && eventData.length === 0) {
         toast.info('No data available for the selected period to download.');
@@ -178,31 +198,21 @@ const SalesReport = () => {
 
   const fetchOverallAnalytics = async (year, month) => {
     try {
-      let url = 'https://central-cafetaria-server.vercel.app/api/sales/overall-analytics';
+      let path = '/api/sales/overall-analytics';
       if (year && month) {
-        url += `?year=${year}&month=${month}`;
+        path += `?year=${year}&month=${month}`;
       }
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await requestJson(path);
       setOverallAnalytics(data);
     } catch (err) {
-      toast.error('Error fetching overall analytics.');
+      toast.error(`Error fetching overall analytics: ${err.message}`);
     }
   };
 
   const fetchAvailableMonths = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://central-cafetaria-server.vercel.app/api/sales/months');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      const data = await requestJson('/api/sales/months');
       console.log('Months data from API:', data);
       
       // Format the months data to match our expected structure
@@ -254,11 +264,9 @@ const SalesReport = () => {
     setTotalCash(0);
     setTotalPaidWithCoins(0);
     try {
-        const response = await fetch(
-            `https://central-cafetaria-server.vercel.app/api/sales/range?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=100`
-        );
-        if (!response.ok) throw new Error('Failed to fetch sales data');
-        const data = await response.json();
+      const data = await requestJson(
+        `/api/sales/range?startDate=${startDate}&endDate=${endDate}&page=${currentPage}&limit=100`
+      );
         const sales = data.data || [];
         setSalesData(sales);
         setAnalytics(data.analytics);
@@ -286,16 +294,14 @@ const SalesReport = () => {
   const fetchEventData = async (startDate, endDate) => {
     try {
         const [bookingsRes, analyticsRes] = await Promise.all([
-            fetch(`https://central-cafetaria-server.vercel.app/api/events/range?startDate=${startDate}&endDate=${endDate}`),
-            fetch(`https://central-cafetaria-server.vercel.app/api/events/analytics-range?startDate=${startDate}&endDate=${endDate}`)
+        requestJson(`/api/events/range?startDate=${startDate}&endDate=${endDate}`),
+        requestJson(`/api/events/analytics-range?startDate=${startDate}&endDate=${endDate}`)
         ]);
 
-        if (!bookingsRes.ok) throw new Error('Failed to fetch event bookings');
-        const bookingsData = await bookingsRes.json();
+      const bookingsData = bookingsRes;
         setEventBookings(bookingsData);
 
-        if (!analyticsRes.ok) throw new Error('Failed to fetch event analytics');
-        const analyticsData = await analyticsRes.json();
+      const analyticsData = analyticsRes;
         setEventAnalytics(analyticsData);
 
     } catch (err) {
@@ -404,6 +410,17 @@ const SalesReport = () => {
     setCurrentPage(1);
     setAvailableDates([]);
     fetchOverallAnalytics();
+  };
+
+  const handleRefresh = async () => {
+    await Promise.all([
+      fetchAvailableMonths(),
+      fetchOverallAnalytics(selectedYear, selectedMonthNumber),
+    ]);
+
+    if (selectedMonth || selectedDate || selectedWeek) {
+      fetchData();
+    }
   };
 
 
@@ -892,7 +909,7 @@ const SalesReport = () => {
 
                     className="btn btn-outline gap-2 hover:bg-base-200 transition-colors"
 
-                    onClick={() => fetchAvailableMonths()}
+                    onClick={handleRefresh}
 
                     disabled={loading}
 

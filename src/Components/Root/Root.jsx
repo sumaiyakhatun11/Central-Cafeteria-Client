@@ -10,8 +10,10 @@ const Root = () => {
 
     return (
         <div className={user ?`min-h-screen `: `min-h-screen bg-gradient-to-br from-red-900/90 to-red-800/50`}>
-            <Navbar></Navbar>
-            <StatusBar></StatusBar>
+            <div className='sticky top-0 z-50 mb-5'>
+                <Navbar></Navbar>
+                <StatusBar></StatusBar>
+            </div>
             <Outlet></Outlet>
             <Footer></Footer>
         </div>
