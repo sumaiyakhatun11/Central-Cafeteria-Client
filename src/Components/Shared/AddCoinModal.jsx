@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import Button from './Button';
 import { useAuth } from '../Authentication/AuthProvider';
 
 const AddCoinModal = ({ isOpen, onClose }) => {
@@ -137,12 +138,12 @@ const AddCoinModal = ({ isOpen, onClose }) => {
             <div className="bg-white p-6 rounded-lg w-full max-w-4xl max-h-[calc(100vh-6rem)] overflow-y-auto shadow-2xl">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl text-red-500 font-bold">Add Coins</h2>
-                    <button onClick={handleClose} className="btn bg-blue-400 text-white font-bold px-2"><FaArrowRight /></button>
+                    <Button onClick={handleClose} variant="info" size="xs" className="!p-2"><FaArrowRight /></Button>
                 </div>
                 
                 <div className="flex justify-center gap-4 mb-6">
-                    <button onClick={() => setView('getCoins')} className={`btn ${view === 'getCoins' ? 'bg-red-600 text-white' : ''}`}>Get Coins</button>
-                    <button onClick={() => setView('coinHistory')} className={`btn ${view === 'coinHistory' ? 'bg-red-600 text-white' : ''}`}>Coin History</button>
+                    <Button onClick={() => setView('getCoins')} variant={view === 'getCoins' ? 'primary' : 'ghost'}>Get Coins</Button>
+                    <Button onClick={() => setView('coinHistory')} variant={view === 'coinHistory' ? 'primary' : 'ghost'}>Coin History</Button>
                 </div>
 
                 {view === 'getCoins' ? (
@@ -189,8 +190,8 @@ const AddCoinModal = ({ isOpen, onClose }) => {
                                         {formData.receiptImageUrl && <img src={formData.receiptImageUrl} alt="preview" className="w-full h-32 object-cover mt-2 rounded-lg" />}
                                     </div>
                                     <div className="flex justify-end gap-4 mt-6">
-                                        <button type="button" onClick={handleClose} className="btn bg-gray-300 text-gray-800 font-bold px-5">Cancel</button>
-                                        <button type="submit" className="btn bg-red-600 hover:bg-red-700 text-white font-bold px-5">Submit Request</button>
+                                        <Button type="button" onClick={handleClose} variant="secondary">Cancel</Button>
+                                        <Button type="submit" variant="primary">Submit Request</Button>
                                     </div>
                                 </form>
                             </div>
