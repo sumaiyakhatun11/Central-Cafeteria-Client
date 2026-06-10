@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../Authentication/AuthProvider';
 import { toast } from 'react-toastify';
 import Spinner from '../Shared/Spinner';
+import Button from '../Shared/Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -217,18 +218,22 @@ const Queue = () => {
             <h2 className="text-3xl font-bold text-white mb-6 text-center">Current Queue</h2>
 
             <div className="flex justify-center items-center gap-4 mb-6">
-                <button
-                    className={`btn btn-sm border-2 border-red-800 font-bold ${view === 'original' ? 'bg-red-600 text-white' : 'bg-none text-red-800'}`}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className={view === 'original' ? 'bg-red-600 text-white border-red-800' : ''}
                     onClick={() => handleViewChange('original')}
                 >
                     Original Queue
-                </button>
-                <button
-                    className={`btn btn-sm border-2 border-red-800 font-bold ${view === 'myOrdersTop' ? 'bg-red-600 text-white' : 'bg-none text-red-800'}`}
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className={view === 'myOrdersTop' ? 'bg-red-600 text-white border-red-800' : ''}
                     onClick={() => handleViewChange('myOrdersTop')}
                 >
                     My Orders Top
-                </button>
+                </Button>
             </div>
 
             {loading ? (
@@ -268,12 +273,14 @@ const Queue = () => {
             {selectedOrder && (String(selectedOrder.userId) === String(user?.id)) && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
-                        <button
-                            className="absolute top-2 right-3 text-2xl text-gray-600 hover:text-red-500"
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-3 !p-0 text-2xl text-gray-600 hover:text-red-500"
                             onClick={() => setSelectedOrder(null)}
                         >
                             ×
-                        </button>
+                        </Button>
                         <h3 className="text-xl font-semibold mb-1 text-red-600">Token: {selectedOrder.token}</h3>
                         <p className="text-sm text-gray-500 mb-1">Queue Position: #{selectedOrder.queue_position || '-'}</p>
                         <p className="text-sm text-gray-500 mb-3">Status: {selectedOrder.status}</p>
@@ -317,13 +324,14 @@ const Queue = () => {
                         </div>
 
                         {selectedOrder.status === 'Ready' && (
-                            <button
+                            <Button
+                                variant="success"
+                                fullWidth
+                                isLoading={updatingStatus}
                                 onClick={handleMarkAsReceived}
-                                disabled={updatingStatus}
-                                className="mt-5 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold disabled:opacity-60"
                             >
                                 {updatingStatus ? 'Updating...' : 'Mark as Received'}
-                            </button>
+                            </Button>
                         )}
                     </div>
                 </div>

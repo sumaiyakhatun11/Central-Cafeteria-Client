@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Authentication/AuthProvider';
 import { toast } from 'react-toastify';
+import Button from '../../Shared/Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -87,12 +88,13 @@ const AdminLogin = () => {
                         />
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
-                        className='bg-red-500 hover:bg-red-500 text-white font-bold py-2 px-10 text-xl tinos-regular transition-colors'
+                        size="lg"
+                        className="!px-10 text-xl tinos-regular"
                     >
                         Login
-                    </button>
+                    </Button>
 
 
                 </form>

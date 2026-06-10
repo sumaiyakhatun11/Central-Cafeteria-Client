@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import Button from '../Shared/Button';
 
 const EventBookingModal = ({ isOpen, onClose, user }) => {
     const [eventFormData, setEventFormData] = useState({});
@@ -75,7 +76,7 @@ const EventBookingModal = ({ isOpen, onClose, user }) => {
     return (
         <dialog id="event_modal" className={`modal ${isOpen ? 'modal-open' : ''}`}>
             <div className="modal-box w-11/12 max-w-2xl">
-                <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <Button onClick={onClose} variant="ghost" size="sm" className="btn-circle absolute right-2 top-2">✕</Button>
                 <h3 className="font-bold text-2xl mb-4">Event Booking Form</h3>
                 <form onSubmit={handleEventSubmit}>
                     {/* Pre-filled Info */}
@@ -134,7 +135,7 @@ const EventBookingModal = ({ isOpen, onClose, user }) => {
                     )}
 
                     <div className="modal-action mt-6">
-                        <button type="submit" className="btn btn-primary">Submit Booking</button>
+                        <Button type="submit" variant="primary">Submit Booking</Button>
                     </div>
                 </form>
             </div>

@@ -2,7 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AddToCartContext } from './Home';
 import { SearchContext } from './SearchContext';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import Button from '../Shared/Button';
 import 'react-toastify/dist/ReactToastify.css';
 
 const FoodCategory = ({ title, items }) => {
@@ -111,12 +112,14 @@ const FoodCategory = ({ title, items }) => {
                                     <span className="text-lg font-semibold text-black">{item.price} <span className='text-2xl'>৳</span></span>
                                 </div>
                                 <p className="text-black mt-2">Unit: {item.unit}</p>
-                                <button
+                                <Button
                                     onClick={() => handleAddToCart(item, actualCategory)}
-                                    className={`mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition-colors ${!isAvailable ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    variant="primary"
+                                    fullWidth
+                                    className="mt-4"
                                     disabled={!isAvailable}>
                                     Add to Cart
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     );

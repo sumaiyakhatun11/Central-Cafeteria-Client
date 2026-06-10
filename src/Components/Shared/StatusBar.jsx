@@ -9,6 +9,7 @@ import AddCoinModal from './AddCoinModal';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import Spinner from './Spinner';
+import Button from './Button';
 import EventHistoryModal from './EventHistoryModal'; // Will create this file
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -89,12 +90,14 @@ const StatusBar = () => {
                     </NavLink>
                     {
                         user &&
-                        <button
+                        <Button
                             onClick={handleLogout}
-                            className='bg-red-500 hover:bg-red-600 text-white p-1.5 md:p-2 rounded-full text-lg md:text-xl font-bold'
+                            variant="primary"
+                            className='!p-1.5 md:!p-2 !rounded-full text-lg md:text-xl font-bold'
+                            title="Logout"
                         >
                             <AiOutlineLogout />
-                        </button>
+                        </Button>
                     }
                 </div>
             ) : (
@@ -163,13 +166,14 @@ const StatusBar = () => {
                                         <MdOutlineShoppingCart className='text-lg md:text-2xl' />
                                     </div>
                                     {/* Logout Button for non-admin users */}
-                                    <button
+                                    <Button
                                         onClick={handleLogout}
-                                        className='bg-red-500 hover:bg-red-600 text-white p-1.5 md:p-2 rounded-full text-lg md:text-xl font-bold transition-colors'
+                                        variant="primary"
+                                        className='!p-1.5 md:!p-2 !rounded-full text-lg md:text-xl font-bold'
                                         title="Logout"
                                     >
                                         <AiOutlineLogout />
-                                    </button>
+                                    </Button>
                                 </>
                             }
                         </div>

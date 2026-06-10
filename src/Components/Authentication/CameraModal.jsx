@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
+import Button from '../Shared/Button';
 
 const CameraModal = ({ isOpen, onClose, onCapture }) => {
     const videoRef = useRef(null);
@@ -61,8 +62,8 @@ const CameraModal = ({ isOpen, onClose, onCapture }) => {
                 <video ref={videoRef} autoPlay playsInline className="w-full h-auto rounded-md"></video>
                 <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
                 <div className="flex justify-center gap-4 mt-4">
-                    <button onClick={handleCapture} className="btn btn-primary">Capture</button>
-                    <button onClick={onClose} className="btn">Cancel</button>
+                    <Button onClick={handleCapture} variant="primary">Capture</Button>
+                    <Button onClick={onClose} variant="secondary">Cancel</Button>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ import { useAuth } from '../Authentication/AuthProvider';
 import { toast } from 'react-toastify';
 
 import { FaPlus, FaMinus } from "react-icons/fa6";
-import Spinner from './Spinner';
+import Button from './Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -15,6 +15,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const [usePrivilege, setUsePrivilege] = useState(false);
     const [isPrivileged, setIsPrivileged] = useState(false); // New state
     const [payWithCoins, setPayWithCoins] = useState(false);
+    const [payWithCash, setPayWithCash] = useState(true);
     const [coinBalance, setCoinBalance] = useState(0);
     const [coinValue, setCoinValue] = useState(5); // Default value
     const { user } = useAuth();
@@ -66,6 +67,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
             fetchCoinBalance(userId);
             fetchCoinValue(); // Initial fetch
             setUsePrivilege(false);
+            setPayWithCash(true);
             interval = setInterval(fetchCoinValue, 3000); // Poll every 3 seconds
         }
 
@@ -198,14 +200,18 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
             const res = await fetch(`${API_BASE_URL}/order/queue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, usePrivilege, payWithCoins, tableNumber })
+                body: JSON.stringify({ userId, usePrivilege, payWithCoins, payWithCash, tableNumber })
             });
 
             const data = await res.json();
             if (res.ok) {
-                toast.success(
-                    `Order placed! Token: ${data.token} | Position: ${data.queuePosition} | Status: ${data.status} | Est. wait: ${data.estimatedWaitingMinutes} min`
-                );
+                if (user && user.role === 'teacher') {
+                    toast.success('Order placed, wait for a while');
+                } else {
+                    toast.success(
+                        `Order placed! Token: ${data.token} | Position: ${data.queuePosition} | Status: ${data.status} | Est. wait: ${data.estimatedWaitingMinutes} min`
+                    );
+                }
                 fetchQueue();
                 setCartItems([]);
                 onClose();
@@ -232,8 +238,8 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                 <div className=" flex justify-between items-center border-b mb-5">
                     <h2 className="text-xl font-semibold">Your Cart</h2>
                     <div className="flex gap-2">
-                        <button onClick={resetCart} className="btn btn-sm bg-gray-200 dark:text-gray-800 hover:bg-gray-300">Reset Cart</button>
-                        <button onClick={onClose} className="text-xl text-gray-500  hover:text-red-500">×</button>
+                        <Button onClick={resetCart} variant="secondary" size="sm">Reset Cart</Button>
+                        <Button onClick={onClose} variant="ghost" size="sm" className="text-xl text-gray-500 hover:text-red-500 transition-colors !p-0">×</Button>
                     </div>
                 </div>
                 {loading ? (
@@ -256,20 +262,24 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                                     <p className="text-red-600 font-bold">{item.price}tk</p>
                                 </div>
                                 <div className="flex gap-2 mt-2">
-                                    <button
+                                    <Button
                                         onClick={() => decreaseUnit(index)}
-                                        className="p-2 text-sm font-bold bg-gray-200 rounded-full disabled:opacity-50"
+                                        variant="secondary"
+                                        size="sm"
+                                        className="!p-2 rounded-full"
                                         disabled={updatingItems[item.name]}
                                     >
                                         <FaMinus />
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         onClick={() => increaseUnit(index)}
-                                        className="p-2 text-sm font-bold bg-gray-200 rounded-full disabled:opacity-50"
+                                        variant="secondary"
+                                        size="sm"
+                                        className="!p-2 rounded-full"
                                         disabled={updatingItems[item.name]}
                                     >
                                         <FaPlus />
-                                    </button>
+                                    </Button>
                                 </div>
                             </li>
                         ))}
@@ -283,7 +293,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                         <input
                             type="checkbox"
                             checked={usePrivilege}
-                            onChange={(e) => setUsePrivilege(e.target.checked)}
+                            onChange={(e) => { setUsePrivilege(e.target.checked); if (e.target.checked) { setPayWithCash(false); } else { setPayWithCash(true); } }}
                             className="accent-red-500"
                         />
                         Use Privilege (Total will be free)
@@ -310,7 +320,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                         <input
                             type="checkbox"
                             checked={payWithCoins}
-                            onChange={(e) => setPayWithCoins(e.target.checked)}
+                            onChange={(e) => { setPayWithCoins(e.target.checked); if (e.target.checked) { setPayWithCash(false); } else { setPayWithCash(true); } }}
                             className="accent-red-500"
                             disabled={coinBalance <= 0}
                         />
@@ -324,15 +334,26 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                             <p className="text-sm">Remaining Balance: {(coinBalance - totalInCoins).toFixed(2)} coins</p>
                         </div>
                     )}
+                    <label className="flex items-center gap-2 mt-2 text-sm">
+                        <input
+                            type="checkbox"
+                            checked={payWithCash}
+                            onChange={(e) => { setPayWithCash(e.target.checked); if (e.target.checked) { setPayWithCoins(false); setUsePrivilege(false); } }}
+                            className="accent-red-500"
+                        />
+                        Pay with Cash
+                    </label>
                 </div>
 
-                <button
-                    className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                <Button
+                    variant="primary"
+                    fullWidth
+                    className="mt-2"
                     onClick={placeOrder}
                     disabled={user && user.role === 'teacher' && (!tableNumber || tableNumber.trim() === '')}
                 >
                     Place Order
-                </button>
+                </Button>
             </div>
         </div>,
         document.body

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Button from '../Shared/Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -134,7 +135,7 @@ const Login = () => {
                 {showScanner ? (
                     <div className='w-full'>
                         <div id="qr-reader"></div>
-                        <button type="button" onClick={() => setShowScanner(false)} className="btn btn-sm btn-warning w-full mt-2">Cancel Scan</button>
+                        <Button type="button" onClick={() => setShowScanner(false)} variant="warning" size="sm" fullWidth className="mt-2">Cancel Scan</Button>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className='flex flex-col items-center'>
@@ -162,22 +163,24 @@ const Login = () => {
                             />
                         </div>
 
-                        <button
+                        <Button
                             type="submit"
-                            className='bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-10 text-xl tinos-regular transition-colors'
+                            size="lg"
+                            className="!px-10 text-xl tinos-regular"
                         >
                             Login
-                        </button>
+                        </Button>
 
                         <div className="divider my-4">OR</div>
 
-                        <button 
+                        <Button 
                             type="button"
                             onClick={() => setShowScanner(true)}
-                            className="btn btn-outline w-full"
+                            variant="outline"
+                            fullWidth
                         >
                             Scan QR to Login
-                        </button>
+                        </Button>
 
                         <div className='mt-4 tinos-regular'>
                             <p>Don't have an account? <NavLink to="/reg" className="text-blue-600 hover:underline">Sign Up</NavLink></p>

@@ -3,6 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../Authentication/AuthProvider';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, currentLoggedInUser, onAdminUpdated }) => {
     const { user, updateUser } = useAuth();
@@ -151,9 +152,9 @@ const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, current
             <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg transform transition-all duration-300">
                 <div className="flex justify-between items-start mb-6">
                     <h2 className="text-3xl font-bold text-gray-800">{isEditMode ? 'Edit Admin Profile' : 'Admin Details'}</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-800 transition-colors">
+                    <Button onClick={onClose} variant="ghost" size="xs" className="!p-0 text-gray-500 hover:text-gray-800 transition-colors">
                         <FaTimes size={24} />
-                    </button>
+                    </Button>
                 </div>
 
                 {isEditMode ? (
@@ -175,10 +176,10 @@ const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, current
                             <input type="text" name="address" value={formData.address} onChange={handleInputChange} className="input input-bordered w-full" />
                         </div>
                         <div className="flex justify-end gap-4 pt-4">
-                            <button type="button" onClick={() => setIsEditMode(false)} className="btn btn-ghost" disabled={loading}>Cancel</button>
-                            <button type="submit" className="btn btn-primary bg-green-600 hover:bg-green-700 text-white" disabled={loading}>
-                                {loading ? <Spinner size="w-5 h-5" /> : 'Save Changes'}
-                            </button>
+                            <Button type="button" onClick={() => setIsEditMode(false)} variant="ghost" disabled={loading}>Cancel</Button>
+                            <Button type="submit" variant="success" isLoading={loading}>
+                                Save Changes
+                            </Button>
                         </div>
                     </form>
                 ) : (
@@ -194,27 +195,28 @@ const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, current
                         </div>
                         <div className="flex flex-col gap-3 pt-4">
                             {currentLoggedInUser?._id === admin._id && (
-                                <button onClick={() => setIsEditMode(true)} className="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white">
+                                <Button onClick={() => setIsEditMode(true)} variant="info" className="bg-blue-600 hover:bg-blue-700">
                                     Edit My Details
-                                </button>
+                                </Button>
                             )}
                             {currentLoggedInUser?.isSuperAdmin && currentLoggedInUser._id !== admin._id && (
-                                <button onClick={handleDelete} className="btn btn-error bg-red-600 hover:bg-red-700 text-white" disabled={loading}>
-                                    {loading ? <Spinner size="w-5 h-5" /> : 'Delete This Admin'}
-                                </button>
+                                <Button onClick={handleDelete} variant="danger" isLoading={loading}>
+                                    Delete This Admin
+                                </Button>
                             )}
                             {currentLoggedInUser?.isSuperAdmin && !(currentLoggedInUser._id === admin._id) && (
-                                <button
+                                <Button
                                     onClick={handleSuperAdminToggleClick}
-                                    className={`btn ${admin.isSuperAdmin ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-teal-500 hover:bg-teal-600'} text-white`}
-                                    disabled={loading}
+                                    variant={admin.isSuperAdmin ? 'warning' : 'info'}
+                                    className={admin.isSuperAdmin ? '' : 'bg-teal-500 hover:bg-teal-600'}
+                                    isLoading={loading}
                                 >
-                                    {loading ? <Spinner size="w-5 h-5" /> : (admin.isSuperAdmin ? 'Demote to Admin' : 'Promote to Super Admin')}
-                                </button>
+                                    {admin.isSuperAdmin ? 'Demote to Admin' : 'Promote to Super Admin'}
+                                </Button>
                             )}
-                            <button onClick={onClose} className="btn btn-ghost">
+                            <Button onClick={onClose} variant="ghost">
                                 Close
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}

@@ -237,9 +237,9 @@ const EventHistoryModal = ({ isOpen, onClose, userId }) => {
             <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-[calc(100vh-6rem)] overflow-y-auto transform transition-all duration-300">
                 <div className="flex justify-between items-center mb-4 border-b pb-2">
                     <h2 className="text-2xl font-bold text-red-600">Your Event History</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-red-600 transition-colors">
+                    <Button onClick={onClose} variant="ghost" size="sm" className="text-gray-500 hover:text-red-600 transition-colors !p-0">
                         <FaTimes size={24} />
-                    </button>
+                    </Button>
                 </div>
 
                 {loading ? (
@@ -276,12 +276,14 @@ const EventHistoryModal = ({ isOpen, onClose, userId }) => {
                                             </span>
                                         </td>
                                         <td className="px-4 py-2"> {/* New TD for actions */}
-                                            <button
+                                            <Button
+                                                variant="info"
+                                                size="sm"
+                                                className="flex items-center gap-1"
                                                 onClick={() => handleDownloadReceipt(event)}
-                                                className="btn btn-sm btn-info text-white bg-blue-400 flex items-center gap-1"
                                             >
                                                 <FaDownload /> Download
-                                            </button>
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))}

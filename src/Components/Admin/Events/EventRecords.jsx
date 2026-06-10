@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const EventRecords = () => { // No prop anymore
     const [bookings, setBookings] = useState([]);
@@ -244,19 +245,22 @@ const EventRecords = () => { // No prop anymore
                                     <td className="px-4 py-2">
                                         
                                             <div className="flex flex-col gap-2">
-                                                <button
+                                                <Button
                                                     onClick={() => handleMakeReceipt(booking)}
-                                                    className="btn btn-sm btn-info text-white bg-blue-400"
+                                                    variant="info"
+                                                    size="sm"
                                                 >
                                                     Make Receipt
-                                                </button>
+                                                </Button>
                                                 {booking.paymentStatus === 'unpaid' && (
-                                                <button
+                                                <Button
                                                     onClick={() => handleClearPayment(booking._id)}
-                                                    className="btn btn-sm btn-success text-white bg-green-400"
+                                                    variant="success"
+                                                    size="sm"
+                                                    className="bg-green-400"
                                                 >
                                                     Clear Payment
-                                                </button>
+                                                </Button>
                                                 )}
                                             </div>
                                         

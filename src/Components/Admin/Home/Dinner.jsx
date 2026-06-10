@@ -30,9 +30,7 @@ const Dinner = () => {
                                 </span>
                             </div>
                             <p className="text-gray-600 mt-2">Unit: {item.unit}</p>
-                            <button className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded transition-colors">
-                                Add to Cart
-                            </button>
+                            <Button type="button" variant="primary" fullWidth className="mt-4">Add to Cart</Button>
                         </div>
                     </div>
                 ))}

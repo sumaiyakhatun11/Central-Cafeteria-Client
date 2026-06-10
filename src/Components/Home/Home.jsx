@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../Authentication/AuthProvider';
 import EventBookingModal from './EventBookingModal'; // Import the new component
 import { toast } from 'react-toastify';
+import Button from '../Shared/Button';
 import { SearchContext } from './SearchContext';
 
 
@@ -169,7 +170,7 @@ const Home = () => {
                         <div className="relative z-20 text-white">
                             <h2 className='text-3xl font-bold'>Host Your Event!</h2>
                             <p className="mb-4">Book our space for your next celebration.</p>
-                            <button onClick={() => user ? setIsModalOpen(true) : nav('/login')} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors tinos-regular">Book Now</button>
+                            <Button onClick={() => user ? setIsModalOpen(true) : nav('/login')} className="tinos-regular">Book Now</Button>
                         </div>
                     </div>
                 </div>
@@ -187,9 +188,9 @@ const Home = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-500 text-gray-800"
                             />
-                            <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors tinos-regular whitespace-nowrap">
+                            <Button className="tinos-regular whitespace-nowrap">
                                 Search
-                            </button>
+                            </Button>
                         </div>
                     </div>
 
@@ -199,7 +200,7 @@ const Home = () => {
                     <div className="mt-6 mb-6 rounded-2xl border border-red-200 bg-gradient-to-br from-white via-red-50 to-red-100 p-4 shadow-md">
                         <div className="flex items-start justify-between gap-3 mb-4">
                             <div>
-                                <h3 className="text-2xl font-bold text-red-700">AI Generated Recommendation</h3>
+                                <h3 className="text-2xl font-bold text-red-700">Recommendation</h3>
                                 <p className="text-sm text-gray-600">Smart picks based on time of day, rating, price, and your search.</p>
                             </div>
                             <div className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
@@ -238,12 +239,12 @@ const Home = () => {
                                                     </span>
                                                 </div>
                                                 <p className="mt-2 text-sm text-gray-600">Price: {item.price} tk</p>
-                                                <button
+                                                <Button
                                                     onClick={() => handleAddToCart(item, Array.isArray(item.category) ? item.category[0] : 'recommended')}
-                                                    className="mt-3 inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
+                                                    size="sm"
                                                 >
                                                     Add to Cart
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     </motion.div>

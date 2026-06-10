@@ -5,6 +5,7 @@ import EditFoodModal from './EditFoodModal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const ManageFood = () => {
     const [foods, setFoods] = useState([]);
@@ -143,8 +144,8 @@ const ManageFood = () => {
         <div className="container mx-auto px-4 py-8">
             <h2 className="text-3xl font-bold mb-6 text-center">Manage Food Items</h2>
             <div className="flex justify-center gap-4 mb-6">
-                <button onClick={() => setIsAddModalOpen(true)} className="btn bg-red-600 text-white font-bold px-5">Add Food</button>
-                <button onClick={handleSetAllAvailable} className="btn bg-red-600 text-white font-bold px-5">Set all foods available</button>
+                <Button onClick={() => setIsAddModalOpen(true)}>Add Food</Button>
+                <Button onClick={handleSetAllAvailable}>Set all foods available</Button>
             </div>
             {loading ? (
                 <div className="flex justify-center items-center h-64"><Spinner /></div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import Button from '../../Shared/Button';
 
 const Events = () => {
     const [showPastEvents, setShowPastEvents] = useState(false);
@@ -21,35 +22,27 @@ const Events = () => {
     return (
         <div className="p-6">
             <div className="flex justify-center items-center gap-4 mb-6">
-                <button
+                <Button
                     onClick={handleCurrent}
-                    className={`btn px-5 ${
-                        isBaseRoute && !showPastEvents
-                            ? 'bg-red-600 text-white'
-                            : 'bg-gray-300 text-slate-800'
-                    }`}
+                    variant={isBaseRoute && !showPastEvents ? 'primary' : 'secondary'}
                 >
                     Current Events
-                </button>
+                </Button>
 
-                <button
+                <Button
                     onClick={handlePast}
-                    className={`btn px-5 ${
-                        isBaseRoute && showPastEvents
-                            ? 'bg-red-600 text-white'
-                            : 'bg-gray-300 text-slate-800'
-                    }`}
+                    variant={isBaseRoute && showPastEvents ? 'primary' : 'secondary'}
                 >
                     Past Events
-                </button>
+                </Button>
 
                 <NavLink
                     to="/admin/events/manage-packages"
                     className={({ isActive }) =>
-                        `btn ${
+                        `btn transition-all duration-200 flex items-center justify-center gap-2 font-semibold ${
                             isActive
-                                ? 'bg-red-600 text-white'
-                                : 'border-2 border-red-600'
+                                ? 'bg-red-600 hover:bg-red-700 text-white border-none'
+                                : 'btn-outline border-2 border-red-600 text-red-600 hover:bg-red-600 hover:border-red-600'
                         }`
                     }
                 >

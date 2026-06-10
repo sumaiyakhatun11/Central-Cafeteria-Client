@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowRight, FaSave } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const SetCoinValueModal = ({ isOpen, onClose, currentCoinValue, lastUpdatedAt }) => {
     const [coinValue, setCoinValue] = useState(currentCoinValue);
@@ -61,7 +62,7 @@ const SetCoinValueModal = ({ isOpen, onClose, currentCoinValue, lastUpdatedAt })
             <div className="bg-white p-6 rounded-lg w-full max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">Set Coin Value</h2>
-                    <button onClick={onClose} className="btn bg-blue-400 text-white font-bold px-2"><FaArrowRight /></button>
+                    <Button onClick={onClose} variant="info" size="xs" className="!p-2"><FaArrowRight /></Button>
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="font-bold">1 Coin =</span>
@@ -90,11 +91,11 @@ const SetCoinValueModal = ({ isOpen, onClose, currentCoinValue, lastUpdatedAt })
                     </label>
                 </div>
                 <div className="flex justify-end gap-4 mt-6">
-                    <button onClick={onClose} className="btn bg-gray-300 text-gray-800 font-bold px-5">Cancel</button>
-                    <button onClick={handleSave} className="btn bg-red-600 hover:bg-red-700 text-white font-bold px-5" disabled={loading}>
-                        {loading ? <Spinner size="w-5 h-5" /> : <FaSave />}
-                        {loading ? 'Saving...' : 'Save'}
-                    </button>
+                    <Button onClick={onClose} variant="secondary">Cancel</Button>
+                    <Button onClick={handleSave} variant="primary" isLoading={loading}>
+                        {!loading && <FaSave />}
+                        Save
+                    </Button>
                 </div>
             </div>
         </div>

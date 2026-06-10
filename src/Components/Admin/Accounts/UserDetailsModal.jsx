@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const UserDetailsModal = ({ isOpen, onClose, user, onVerify, onUnverify, onPrivilegeToggle, onDelete }) => {
     const [loading, setLoading] = useState(false);
@@ -46,9 +47,9 @@ const UserDetailsModal = ({ isOpen, onClose, user, onVerify, onUnverify, onPrivi
                         <h2 className="text-2xl font-bold text-black">{user.name} ({user.id})</h2>
                         <p className="mt-1 text-sm text-gray-500">Account details and verification controls</p>
                     </div>
-                    <button onClick={onClose} className="btn btn-sm bg-blue-400 text-white font-bold px-3 hover:bg-blue-500">
+                    <Button onClick={onClose} variant="info" size="xs" className="!p-2">
                         <FaArrowRight />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
@@ -82,43 +83,44 @@ const UserDetailsModal = ({ isOpen, onClose, user, onVerify, onUnverify, onPrivi
                     )}
 
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <button
+                        <Button
                             onClick={handleVerifyClick}
-                            className="btn bg-green-600 text-white font-bold px-5 py-2 rounded"
-                            disabled={loading}
+                            variant="success"
+                            isLoading={loading}
                         >
-                            {loading ? <Spinner size="w-5 h-5" /> : 'Verify User'}
-                        </button>
-                        <button
+                            Verify User
+                        </Button>
+                        <Button
                             onClick={handleUnverifyClick}
-                            className="btn bg-yellow-600 text-white font-bold px-5 py-2 rounded"
-                            disabled={loading}
+                            variant="warning"
+                            isLoading={loading}
                         >
-                            {loading ? <Spinner size="w-5 h-5" /> : 'Mark as Not Verified'}
-                        </button>
+                            Mark as Not Verified
+                        </Button>
                         {user.verified && (
-                            <button
+                            <Button
                                 onClick={handlePrivilegeToggleClick}
-                                className={`btn ${user.privileged ? 'bg-red-600' : 'bg-green-600'} text-white font-bold px-5 py-2 rounded`}
-                                disabled={loading}
+                                variant={user.privileged ? 'danger' : 'success'}
+                                isLoading={loading}
                             >
-                                {loading ? <Spinner size="w-5 h-5" /> : (user.privileged ? 'Revoke Privilege' : 'Grant Privilege')}
-                            </button>
+                                {user.privileged ? 'Revoke Privilege' : 'Grant Privilege'}
+                            </Button>
                         )}
-                        <button
+                        <Button
                             onClick={handleDeleteClick}
-                            className="btn bg-red-600 text-white font-bold px-5 py-2 rounded"
-                            disabled={loading}
+                            variant="danger"
+                            isLoading={loading}
                         >
-                            {loading ? <Spinner size="w-5 h-5" /> : 'Delete User'}
-                        </button>
-                        <button
+                            Delete User
+                        </Button>
+                        <Button
                             onClick={onClose}
-                            className="btn bg-blue-400 text-white font-bold px-5 py-2 rounded sm:col-span-2"
+                            variant="info"
+                            className="sm:col-span-2"
                             disabled={loading}
                         >
                             Close
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const AddAdminModal = ({ isOpen, onClose, onAdminAdded }) => {
     const [formData, setFormData] = useState({
@@ -54,7 +55,7 @@ const AddAdminModal = ({ isOpen, onClose, onAdminAdded }) => {
             <div className="bg-white p-6 rounded-lg w-full max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold">Add New Admin</h2>
-                    <button onClick={onClose} className="btn bg-blue-400 text-white font-bold px-2"><FaArrowRight /></button>
+                    <Button onClick={onClose} variant="info" size="xs" className="!p-2"><FaArrowRight /></Button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -74,10 +75,10 @@ const AddAdminModal = ({ isOpen, onClose, onAdminAdded }) => {
                         <input type="text" name="address" value={formData.address} onChange={handleInputChange} className="input input-bordered w-full" />
                     </div>
                     <div className="flex justify-end gap-4">
-                        <button type="button" onClick={onClose} className="btn bg-blue-400 text-white font-bold px-5" disabled={loading}>Cancel</button>
-                        <button type="submit" className="btn bg-red-600 text-white font-bold px-5" disabled={loading}>
-                            {loading ? <Spinner size="w-5 h-5" /> : 'Add Admin'}
-                        </button>
+                        <Button type="button" onClick={onClose} variant="info" disabled={loading}>Cancel</Button>
+                        <Button type="submit" variant="primary" isLoading={loading}>
+                            Add Admin
+                        </Button>
                     </div>
                 </form>
             </div>

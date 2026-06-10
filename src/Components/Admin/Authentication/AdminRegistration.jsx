@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Button from '../../Shared/Button';
 
 const AdminRegistration = () => {
     const [formData, setFormData] = useState({
@@ -216,13 +217,15 @@ const AdminRegistration = () => {
                                         alt={`ID Card Preview ${index + 1}`}
                                         className='w-full h-full object-contain'
                                     />
-                                    <button
+                                    <Button
                                         type="button"
                                         onClick={() => handleRemoveImage(index)}
-                                        className='absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs'
+                                        variant="danger"
+                                        size="xs"
+                                        className='absolute top-1 right-1 !p-0 w-6 h-6 rounded-full text-xs'
                                     >
                                         ×
-                                    </button>
+                                    </Button>
                                     {card.uploaded && (
                                         <div className='absolute bottom-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded'>
                                             Uploaded
@@ -257,13 +260,15 @@ const AdminRegistration = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button
+                    <Button
                         type="submit"
-                        className='bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-10 text-lg tinos-regular transition-colors  w-full mb-4 disabled:opacity-50'
-                        disabled={formData.isSubmitting}
+                        variant="primary"
+                        fullWidth
+                        className='my-4'
+                        isLoading={formData.isSubmitting}
                     >
                         {formData.isSubmitting ? 'Uploading...' : 'Register'}
-                    </button>
+                    </Button>
 
                     {formData.uploadProgress > 0 && formData.uploadProgress < 100 && (
                         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">

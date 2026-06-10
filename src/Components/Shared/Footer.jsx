@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../Authentication/AuthProvider';
+import Button from './Button';
 import { 
   Facebook, 
   Twitter, 
@@ -66,7 +67,7 @@ const Footer = () => {
                                     <li><NavLink to="/admin/accounts" className="hover:text-red-400 hover:underline transition-colors">User Accounts</NavLink></li>
                                     <li><NavLink to="/admin/sales" className="hover:text-red-400 hover:underline transition-colors">Sales Reports</NavLink></li>
                                     <li><NavLink to="/admin/events" className="hover:text-red-400 hover:underline transition-colors">Event Records</NavLink></li>
-                                    <li><button onClick={handleLogout} className="hover:text-red-400 hover:underline transition-colors text-left w-full">Logout</button></li>
+                                    <li><Button variant="link" className="text-left w-full hover:text-red-400 hover:underline transition-colors" onClick={handleLogout}>Logout</Button></li>
                                 </>
                             ) : (
                                 <>
@@ -74,9 +75,9 @@ const Footer = () => {
                                     <li><NavLink to="/queue" className="hover:text-red-400 hover:underline transition-colors">Live Queue</NavLink></li>
                                     {user && (
                                         <>
-                                            <li><button onClick={() => window.scrollTo(0,0)} className="hover:text-red-400 hover:underline transition-colors">My Event History</button></li>
-                                            <li><button onClick={() => window.scrollTo(0,0)} className="hover:text-red-400 hover:underline transition-colors">Coin Status</button></li>
-                                            <li><button onClick={handleLogout} className="hover:text-red-400 hover:underline transition-colors text-left w-full">Logout</button></li>
+                                            <li><Button variant="link" className="text-left w-full" onClick={() => window.scrollTo(0,0)}>My Event History</Button></li>
+                                            <li><Button variant="link" className="text-left w-full" onClick={() => window.scrollTo(0,0)}>Coin Status</Button></li>
+                                            <li><Button variant="link" className="text-left w-full" onClick={handleLogout}>Logout</Button></li>
                                         </>
                                     )}
                                     {!user && (
@@ -147,7 +148,7 @@ const Footer = () => {
                     <div className="flex flex-col lg:flex-row gap-6">
                         <a href="#" className="hover:text-red-500 transition-colors">Privacy Policy</a>
                         <a href="#" className="hover:text-red-500 transition-colors">Terms of Service</a>
-                        <p>Developed by <button onClick={() => setIsDevModalOpen(true)} className="text-red-500 font-semibold hover:underline">University Dev Team</button></p>
+                        <p>Developed by <Button variant="link" className="text-red-500 font-semibold hover:underline" onClick={() => setIsDevModalOpen(true)}>University Dev Team</Button></p>
                     </div>
                 </div>
             </div>

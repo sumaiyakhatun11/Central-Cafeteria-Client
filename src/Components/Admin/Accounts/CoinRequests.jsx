@@ -9,6 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf'; // Import jspdf
 import { FaDownload } from 'react-icons/fa'; // Import FaDownload
+import Button from '../../Shared/Button';
 
 const CoinRequests = () => {
     const { user } = useAuth();
@@ -335,35 +336,37 @@ const CoinRequests = () => {
                 <h2 className="text-2xl font-bold">Coin Requests</h2>
                 <div className="flex gap-2">
                     {user?.isSuperAdmin && (
-                        <button
+                        <Button
                             onClick={() => setIsCoinValueModalOpen(true)}
-                            className="btn px-5 bg-red-600 hover:bg-red-800 text-white font-bold"
                         >
                             Maintain Coin Value
-                        </button>
+                        </Button>
                     )}
-                    <button
+                    <Button
                         onClick={handleDownloadCsv}
-                        className="btn px-5 bg-blue-600 hover:bg-blue-800 text-white font-bold"
+                        variant="info"
+                        className="bg-blue-600 hover:bg-blue-800"
                     >
                         Download Report
-                    </button>
+                    </Button>
                 </div>
             </div>
 
             <div className="flex gap-4 mb-4">
-                <button
-                    className={`btn px-5 border ${activeTab === 'pending' ? 'bg-red-600 text-white' : ''}`}
+                <Button
+                    variant={activeTab === 'pending' ? 'primary' : 'ghost'}
+                    className="border"
                     onClick={() => setActiveTab('pending')}
                 >
                     Pending Requests
-                </button>
-                <button
-                    className={`btn px-5 border ${activeTab === 'approved' ? 'bg-green-600 text-white' : ''}`}
+                </Button>
+                <Button
+                    variant={activeTab === 'approved' ? 'success' : 'ghost'}
+                    className="border"
                     onClick={() => setActiveTab('approved')}
                 >
                     Approved Requests
-                </button>
+                </Button>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -407,24 +410,26 @@ const CoinRequests = () => {
                                     <td className="px-4 py-2">{request.amount}</td>
                                     <td className="px-4 py-2">{new Date(request.requestedAt).toLocaleDateString()}</td>
                                     <td className="px-4 py-2"> {/* New TD for Download button */}
-                                        <button
+                                        <Button
                                             onClick={() => handleDownloadCoinReceipt(request)}
-                                            className="btn btn-sm btn-info text-white bg-blue-400 flex items-center gap-1"
+                                            variant="info"
+                                            size="sm"
                                         >
                                             <FaDownload />
-                                        </button>
+                                        </Button>
                                     </td>
                                     {activeTab === 'pending' && (
                                         <td className="px-4 py-2">
-                                            <button
+                                            <Button
                                                 onClick={() => {
                                                     setSelectedRequest(request);
                                                     setIsModalOpen(true);
                                                 }}
-                                                className="btn px-5 bg-blue-500 text-white"
+                                                variant="info"
+                                                className="bg-blue-500 hover:bg-blue-600"
                                             >
                                                 View Details
-                                            </button>
+                                            </Button>
                                         </td>
                                     )}
                                 </tr>

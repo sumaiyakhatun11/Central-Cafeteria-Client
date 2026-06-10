@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import Spinner from '../../Shared/Spinner';
-
+import Spinner from '../../Shared/Spinner';import Button from '../../Shared/Button';
 const INITIAL_FORM = {
     name: '',
     unit: 'kg',
@@ -255,12 +254,8 @@ const StockAlert = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button onClick={fetchMaterials} className="btn bg-red-600 hover:bg-red-700 text-white">
-                        Refresh
-                    </button>
-                    <button onClick={() => setIsAddModalOpen(true)} className="btn bg-emerald-600 hover:bg-emerald-700 text-white">
-                        Add Raw Material
-                    </button>
+                    <Button variant="danger" size="sm" onClick={fetchMaterials}>Refresh</Button>
+                    <Button variant="success" size="sm" onClick={() => setIsAddModalOpen(true)}>Add Raw Material</Button>
                 </div>
             </div>
 
@@ -311,12 +306,13 @@ const StockAlert = () => {
                                         onChange={(e) => handleStockInputChange(item.id, e.target.value)}
                                         className="input input-bordered input-sm w-28"
                                     />
-                                    <button
-                                        className="btn btn-sm bg-red-600 hover:bg-red-700 text-white"
+                                    <Button
+                                        variant="danger"
+                                        size="sm"
                                         onClick={() => handleUpdateStock(item.id)}
                                     >
                                         Update Stock
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -392,12 +388,12 @@ const StockAlert = () => {
                                 </div>
                             </div>
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" className="btn" onClick={() => setIsAddModalOpen(false)}>
+                                <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddModalOpen(false)}>
                                     Cancel
-                                </button>
-                                <button type="submit" className="btn bg-emerald-600 hover:bg-emerald-700 text-white">
+                                </Button>
+                                <Button type="submit" variant="success">
                                     Add Material
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>

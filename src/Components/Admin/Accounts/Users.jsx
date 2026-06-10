@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import UserDetailsModal from './UserDetailsModal';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -11,8 +12,6 @@ const Users = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
-
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -132,19 +131,7 @@ const Users = () => {
 
     return (
         <div className="p-6">
-            {/* Filter Bar */}
             <div className="flex gap-4 mb-6">
-                {/* <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    className="px-4 py-2 border rounded"
-                >
-                    <option value="">All Users</option>
-                    <option value="students">Students</option>
-                    <option value="teachers">Teachers</option>
-                    <option value="staffs">Staffs</option>
-                    <option value="privileged">Privileged</option>
-                </select> */}
                 <input
                     type="text"
                     placeholder="Search by ID"
@@ -154,7 +141,6 @@ const Users = () => {
                 />
             </div>
 
-            {/* User Table */}
             {loading ? (
                 <div className="flex justify-center items-center h-64"><Spinner /></div>
             ) : (
@@ -179,15 +165,17 @@ const Users = () => {
                                     <td className="px-4 py-2">{user.coins || 0}</td>
                                     <td className="px-4 py-2">{user.privileged ? 'Yes' : 'No'}</td>
                                     <td className="px-4 py-2">
-                                        <button
+                                        <Button
                                             onClick={() => {
                                                 setSelectedUser(user);
                                                 setModalOpen(true);
                                             }}
-                                            className="text-xl font-bold"
+                                            variant="ghost"
+                                            size="xs"
+                                            className="text-xl font-bold !p-0"
                                         >
                                             ⋮
-                                        </button>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}

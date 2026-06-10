@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -385,9 +386,9 @@ const Queue = () => {
         <div className="p-6 max-w-7xl mx-auto text-black">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
                 <h2 className="text-3xl font-bold">Order Queue & Token Management</h2>
-                <button className="btn btn-outline" onClick={fetchQueueData} disabled={loading}>
-                    {loading ? 'Refreshing...' : 'Refresh'}
-                </button>
+                <Button variant="outline" onClick={fetchQueueData} isLoading={loading}>
+                    Refresh
+                </Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -431,16 +432,16 @@ const Queue = () => {
                         </label>
                     </div>
 
-                    <button
-                        className="btn bg-red-600 text-white"
-                        disabled={updatingControl}
+                    <Button
+                        variant="primary"
+                        isLoading={updatingControl}
                         onClick={() => updateQueueControl({
                             minutesPerOrder: queueControl.minutesPerOrder,
                             queueEnabled: queueControl.queueEnabled
                         })}
                     >
-                        {updatingControl ? 'Saving...' : 'Save Queue Control'}
-                    </button>
+                        Save Queue Control
+                    </Button>
                 </div>
             </div>
 
@@ -454,7 +455,7 @@ const Queue = () => {
                         placeholder="e.g. TK-20260421-123"
                         className="input input-bordered w-full"
                     />
-                    <button className="btn bg-red-600 text-white" onClick={handleSearchByToken}>Search</button>
+                    <Button onClick={handleSearchByToken}>Search</Button>
                 </div>
 
                 {searchedOrder && (
@@ -520,12 +521,14 @@ const Queue = () => {
             {selectedOrder && (
                 <div className="fixed inset-0 z-[100] bg-black/50 flex justify-center items-center p-4">
                     <div className="bg-white w-full max-w-lg rounded-lg shadow-xl p-6 relative">
-                        <button
-                            className="absolute top-2 right-3 text-2xl text-gray-600 hover:text-red-500"
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-3 text-2xl text-gray-600 hover:text-red-500 !p-0"
                             onClick={() => setSelectedOrder(null)}
                         >
                             &times;
-                        </button>
+                        </Button>
 
                         <h3 className="text-xl font-bold text-red-600 mb-1">Token: {selectedOrder.token}</h3>
                         <p className="text-sm text-gray-500 mb-1">Status: {selectedOrder.status}</p>
@@ -547,30 +550,30 @@ const Queue = () => {
 
                         <div className="flex gap-3 justify-end">
                             {selectedOrder.status === 'Placed' && (
-                                <button
-                                    className="btn bg-yellow-500 hover:bg-yellow-600 text-white"
-                                    disabled={updatingStatus}
+                                <Button
+                                    variant="warning"
+                                    isLoading={updatingStatus}
                                     onClick={() => updateOrderStatus(selectedOrder._id, 'Ready')}
                                 >
                                     Mark Ready to Pick
-                                </button>
+                                </Button>
                             )}
                             {selectedOrder.status === 'Ready' && (
                                 <>
-                                    <button
-                                        className="btn btn-outline"
+                                    <Button
+                                        variant="outline"
                                         disabled
                                         title="Customer will confirm completion from their queue page"
                                     >
                                         Waiting for Customer Confirmation
-                                    </button>
-                                    <button
-                                        className="btn bg-green-600 hover:bg-green-700 text-white"
-                                        disabled={updatingStatus}
+                                    </Button>
+                                    <Button
+                                        variant="success"
+                                        isLoading={updatingStatus}
                                         onClick={() => handleAdminCompleteOverride(selectedOrder._id)}
                                     >
                                         Completed (Admin Override)
-                                    </button>
+                                    </Button>
                                 </>
                             )}
                         </div>

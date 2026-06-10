@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Github, ExternalLink, User } from 'lucide-react';
 import devTeam from '../../data/devTeam';
+import Button from './Button';
 
 const TeamMemberImage = ({ src, name }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -47,12 +48,14 @@ const DevTeamModal = ({ isOpen, onClose }) => {
              <h2 className="text-2xl font-bold text-red-600">University Dev Team</h2>
              <p className='text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold'>Meet our brilliant minds</p>
           </div>
-          <button
+          <Button
             onClick={onClose}
+            variant="ghost"
+            size="sm"
             className="p-2 transition-colors rounded-full hover:bg-gray-200 text-gray-500 hover:text-red-600"
           >
             <X size={24} />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}

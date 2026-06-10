@@ -3,6 +3,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const API_BASES = [
   import.meta.env.VITE_API_URL,
@@ -535,51 +536,20 @@ const SalesReport = () => {
 
               {/* Download Button */}
 
-              <button
-
-                className={`btn gap-2 transition-all duration-200 ${
-
-                  isDownloadDisabled() 
-
-                    ? 'btn-disabled' 
-
-                    : 'btn-accent hover:btn-accent/90 shadow-sm'
-
-                }`}
-
+              <Button
+                variant="accent"
+                className="gap-2"
                 onClick={handleDownload}
-
                 disabled={isDownloadDisabled()}
-
+                isLoading={isDownloading}
               >
-
-                {isDownloading ? (
-
-                  <>
-
-                    <span className="loading loading-spinner loading-sm"></span>
-
-                    Downloading...
-
-                  </>
-
-                ) : (
-
-                  <>
-
+                {!isDownloading && (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-
                     </svg>
-
-                    {downloadButtonText()}
-
-                  </>
-
                 )}
-
-              </button>
+                {isDownloading ? 'Downloading...' : downloadButtonText()}
+              </Button>
 
             </div>
 
@@ -698,59 +668,26 @@ const SalesReport = () => {
                 </label>
 
                 <div className="join w-full shadow-sm">
-
-                  <button
-
-                    className={`join-item btn flex-1 transition-all ${
-
-                      viewType === 'daily' 
-
-                        ? 'btn-primary shadow-sm' 
-
-                        : 'btn-outline hover:bg-base-200'
-
-                    }`}
-
+                  <Button
+                    variant={viewType === 'daily' ? 'primary' : 'ghost'}
+                    className={`join-item flex-1 !rounded-none !border-r ${viewType === 'daily' ? '' : 'border-gray-300'}`}
                     onClick={() => handleViewTypeChange('daily')}
-
                   >
-
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-
                     </svg>
-
                     Daily
-
-                  </button>
-
-                  <button
-
-                    className={`join-item btn flex-1 transition-all ${
-
-                      viewType === 'weekly' 
-
-                        ? 'btn-primary shadow-sm' 
-
-                        : 'btn-outline hover:bg-base-200'
-
-                    }`}
-
+                  </Button>
+                  <Button
+                    variant={viewType === 'weekly' ? 'primary' : 'ghost'}
+                    className={`join-item flex-1 !rounded-none ${viewType === 'weekly' ? '' : 'border-gray-300'}`}
                     onClick={() => handleViewTypeChange('weekly')}
-
                   >
-
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-
                     </svg>
-
                     Weekly
-
-                  </button>
-
+                  </Button>
                 </div>
 
               </div>
@@ -866,83 +803,46 @@ const SalesReport = () => {
                 </label>
 
                 <div className="flex flex-col gap-2">
-
                   {/* Mobile Download Button - Hidden on desktop */}
-
-                  <button
-
-                    className={`btn btn-accent gap-2 lg:hidden ${
-
-                      isDownloadDisabled() ? 'btn-disabled' : 'hover:btn-accent/90 shadow-sm'
-
-                    }`}
-
+                  <Button
+                    variant="accent"
+                    className="gap-2 lg:hidden"
                     onClick={handleDownload}
-
                     disabled={isDownloadDisabled()}
-
+                    isLoading={isDownloading}
                   >
-
-                    {isDownloading ? (
-
-                      <span className="loading loading-spinner loading-sm"></span>
-
-                    ) : (
-
+                    {!isDownloading && (
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-
                       </svg>
-
                     )}
-
                     {isDownloading ? 'Downloading...' : 'Download'}
-
-                  </button>
-
+                  </Button>
   
-
                   {/* Refresh Button */}
-
-                  <button
-
-                    className="btn btn-outline gap-2 hover:bg-base-200 transition-colors"
-
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-gray-300 border"
                     onClick={handleRefresh}
-
-                    disabled={loading}
-
+                    isLoading={loading}
                   >
-
+                    {!loading && (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-
                     </svg>
-
+                    )}
                     Refresh
-
-                  </button>
-
-                  <button
-
-                    className="btn btn-outline gap-2 hover:bg-base-200 transition-colors"
-
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-gray-300 border"
                     onClick={handleReset}
-
                   >
-
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-
                     </svg>
-
                     Reset
-
-                  </button>
-
+                  </Button>
                 </div>
 
               </div>
@@ -1337,19 +1237,15 @@ const SalesReport = () => {
 
         <div className="flex justify-center items-center space-x-2 mt-6">
 
-          <button
-
-            className="btn btn-sm"
-
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             disabled={currentPage === 1}
-
             onClick={() => handlePageChange(currentPage - 1)}
-
           >
-
             « Previous
-
-          </button>
+          </Button>
 
           <span className="text-sm">
 
@@ -1357,19 +1253,15 @@ const SalesReport = () => {
 
           </span>
 
-          <button
-
-            className="btn btn-sm"
-
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             disabled={currentPage === pagination.totalPages}
-
             onClick={() => handlePageChange(currentPage + 1)}
-
           >
-
             Next »
-
-          </button>
+          </Button>
 
         </div>
 

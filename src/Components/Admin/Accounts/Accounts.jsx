@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import Users from './Users';
 import Admins from './Admins';
 import CoinRequests from './CoinRequests';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Button from '../../Shared/Button';
 
 const Accounts = () => {
     const [view, setView] = useState('users'); // 'users', 'admins', or 'coin-requests'
@@ -11,24 +10,24 @@ const Accounts = () => {
     return (
         <div className="p-6 ">
             <div className="flex justify-center gap-4 mb-6">
-                <button 
+                <Button 
                     onClick={() => setView('users')}
-                    className={`btn px-5 ${view === 'users' ? 'bg-red-600 text-white' : 'bg-gray-300 text-slate-800'}`}
+                    variant={view === 'users' ? 'primary' : 'secondary'}
                 >
                     Users
-                </button>
-                <button 
+                </Button>
+                <Button 
                     onClick={() => setView('admins')}
-                    className={`btn px-5 ${view === 'admins' ? 'bg-red-600 text-white' : 'bg-gray-300 text-slate-800'}`}
+                    variant={view === 'admins' ? 'primary' : 'secondary'}
                 >
                     Admins
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={() => setView('coin-requests')}
-                    className={`btn px-5 ${view === 'coin-requests' ? 'bg-red-600 text-white' : 'bg-gray-300 text-slate-800'}`}
+                    variant={view === 'coin-requests' ? 'primary' : 'secondary'}
                 >
                     Coin Requests
-                </button>
+                </Button>
             </div>
 
             {view === 'users' && <Users />}

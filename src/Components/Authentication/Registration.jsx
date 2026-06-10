@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Html5Qrcode } from 'html5-qrcode';
 import CameraModal from './CameraModal'; // Make sure the path is correct
+import Button from '../Shared/Button';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -174,8 +175,8 @@ const Registration = () => {
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700 font-bold mb-2">ID Card (Front)</label>
                         <div className="flex gap-2">
-                            <button type="button" onClick={() => frontIdRef.current.click()} className="btn btn-outline flex-1">Upload</button>
-                            <button type="button" onClick={() => { setCapturingSide('front'); setIsCameraOpen(true); }} className="btn btn-outline flex-1">Capture</button>
+                            <Button type="button" onClick={() => frontIdRef.current.click()} variant="outline" fullWidth>Upload</Button>
+                            <Button type="button" onClick={() => { setCapturingSide('front'); setIsCameraOpen(true); }} variant="outline" fullWidth>Capture</Button>
                         </div>
                         <input type="file" ref={frontIdRef} accept="image/*" onChange={(e) => onFileChange(e, 'front')} className="hidden" />
                         {formData.idCardFrontUrl && <img src={formData.idCardFrontUrl} alt="ID Card Front Preview" className="w-full h-40 object-cover mt-2 rounded" />}
@@ -185,8 +186,8 @@ const Registration = () => {
                     <div className="mb-4 w-full">
                         <label className="block text-gray-700 font-bold mb-2">ID Card (Back)</label>
                         <div className="flex gap-2">
-                            <button type="button" onClick={() => backIdRef.current.click()} className="btn btn-outline flex-1">Upload</button>
-                            <button type="button" onClick={() => { setCapturingSide('back'); setIsCameraOpen(true); }} className="btn btn-outline flex-1">Capture</button>
+                            <Button type="button" onClick={() => backIdRef.current.click()} variant="outline" fullWidth>Upload</Button>
+                            <Button type="button" onClick={() => { setCapturingSide('back'); setIsCameraOpen(true); }} variant="outline" fullWidth>Capture</Button>
                         </div>
                         <input type="file" ref={backIdRef} accept="image/*" onChange={(e) => onFileChange(e, 'back')} className="hidden" />
                         {formData.idCardBackUrl && <img src={formData.idCardBackUrl} alt="ID Card Back Preview" className="w-full h-40 object-cover mt-2 rounded" />}
@@ -220,9 +221,9 @@ const Registration = () => {
                     <Input label="Password" type="password" name="password" value={formData.password} onChange={handleChange} error={errors.password} />
                     <Input label="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
 
-                    <button type="submit" className='bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-10 text-lg tinos-regular transition-colors w-full my-4 disabled:opacity-50' disabled={formData.isSubmitting}>
-                        {formData.isSubmitting ? 'Registering...' : 'Register'}
-                    </button>
+                    <Button type="submit" fullWidth className='my-4' isLoading={formData.isSubmitting}>
+                        Register
+                    </Button>
 
                     <div className='tinos-regular text-center'>
                         <p>Already have an account? <NavLink to="/login" className="text-blue-600 hover:underline">Sign in</NavLink></p>

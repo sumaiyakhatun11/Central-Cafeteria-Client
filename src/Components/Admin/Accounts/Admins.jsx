@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../Authentication/AuthProvider';
 import AddAdminModal from './AddAdminModal';
 import AdminDetailsModal from './AdminDetailsModal';
+import Button from '../../Shared/Button';
 
 const Admins = () => {
     const { user } = useAuth();
@@ -63,12 +64,11 @@ const Admins = () => {
         <div className="p-6">
             {user && user.isSuperAdmin && (
                 <div className="flex justify-end mb-4">
-                    <button
+                    <Button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="btn bg-red-600 text-white font-bold px-5"
                     >
                         Add Admin
-                    </button>
+                    </Button>
                 </div>
             )}
             <div className="overflow-x-auto">
@@ -88,15 +88,17 @@ const Admins = () => {
                                 <td className="px-4 py-2">{admin.email}</td>
                                 <td className="px-4 py-2">{admin.isSuperAdmin ? 'Super Admin' : 'Admin'}</td>
                                 <td className="px-4 py-2">
-                                    <button 
+                                    <Button 
                                         onClick={() => {
                                             setSelectedAdmin(admin);
                                             setIsDetailsModalOpen(true);
                                         }}
-                                        className="text-xl font-bold"
+                                        variant="ghost"
+                                        size="xs"
+                                        className="text-xl font-bold !p-0"
                                     >
                                         ⋮
-                                    </button>
+                                    </Button>
                                 </td>
                             </tr>
                         ))}

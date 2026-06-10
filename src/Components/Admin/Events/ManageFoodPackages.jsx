@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Spinner from '../../Shared/Spinner';
+import Button from '../../Shared/Button';
 
 const ManageFoodPackages = () => {
     const [packages, setPackages] = useState([]);
@@ -138,7 +139,7 @@ const ManageFoodPackages = () => {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-red-700">Manage Food Packages</h1>
-                <button className="btn bg-red-600 px-5 hover:bg-red-700 text-white" onClick={openAddModal}>Add New Package</button>
+                <Button onClick={openAddModal}>Add New Package</Button>
             </div>
 
             {loading && <Spinner />}
@@ -152,8 +153,8 @@ const ManageFoodPackages = () => {
                             <p className="text-lg font-semibold text-gray-800 dark:text-white">Price: {pkg.price} tk</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">Items: {pkg.items.length}</p>
                             <div className="card-actions justify-end mt-4">
-                                <button className="btn btn-sm btn-warning bg-green-600 px-5 text-white" onClick={() => openEditModal(pkg)}>Edit</button>
-                                <button className="btn btn-sm btn-error bg-red-600 px-5 text-white" onClick={() => openDeleteModal(pkg)}>Delete</button>
+                                <Button size="sm" variant="success" onClick={() => openEditModal(pkg)}>Edit</Button>
+                                <Button size="sm" variant="danger" onClick={() => openDeleteModal(pkg)}>Delete</Button>
                             </div>
                         </div>
                     </div>
@@ -192,26 +193,29 @@ const ManageFoodPackages = () => {
                                             onChange={(e) => handleItemChange(index, 'quantity', Number(e.target.value))}
                                             className="input input-bordered w-24"
                                         />
-                                        <button
+                                        <Button
                                             type="button"
-                                            className="btn btn-sm  bg-red-600 text-white px-5"
+                                            size="sm"
+                                            variant="danger"
                                             onClick={() => handleDeleteItem(index)}
                                         >
                                             Delete
-                                        </button>
+                                        </Button>
                                     </div>
                                 ))}
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-sm bg-blue-500 text-white px-5 mt-2"
+                                    size="sm"
+                                    variant="info"
+                                    className="bg-blue-500 hover:bg-blue-600 mt-2"
                                     onClick={handleAddItem}
                                 >
                                     Add Item
-                                </button>
+                                </Button>
                             </div>
                             <div className="modal-action">
-                                <button type="button" className="btn bg-red-600 px-5 text-white" onClick={() => { isEditModalOpen ? setIsEditModalOpen(false) : setIsAddModalOpen(false)}}>Cancel</button>
-                                <button type="submit" className="btn bg-green-600 px-5 text-white">{isEditModalOpen ? 'Save Changes' : 'Add'}</button>
+                                <Button type="button" variant="danger" onClick={() => { isEditModalOpen ? setIsEditModalOpen(false) : setIsAddModalOpen(false)}}>Cancel</Button>
+                                <Button type="submit" variant="success">{isEditModalOpen ? 'Save Changes' : 'Add'}</Button>
                             </div>
                         </form>
                     </div>
@@ -225,8 +229,8 @@ const ManageFoodPackages = () => {
                         <h3 className="font-bold text-lg text-red-700">Confirm Deletion</h3>
                         <p className="py-4">Are you sure you want to delete the package "<span className="font-semibold">{selectedPackage.name}</span>"?</p>
                         <div className="modal-action">
-                            <button className="btn btn-ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
-                            <button className="btn btn-error text-white" onClick={handleDelete}>Delete</button>
+                            <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
+                            <Button variant="danger" onClick={handleDelete}>Delete</Button>
                         </div>
                     </div>
                 </div>
