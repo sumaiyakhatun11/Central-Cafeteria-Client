@@ -207,8 +207,9 @@ const Registration = () => {
                             className='border-2 text-lg w-full py-2 px-3 focus:outline-none focus:border-gray-700 rounded mt-1 bg-white'
                             required
                         >
-                            <option value="student">Student</option>
                             <option value="teacher">Teacher</option>
+                            <option value="student">Student</option>
+                            <option value="staff">Staff</option>
                         </select>
                     </div>
 
