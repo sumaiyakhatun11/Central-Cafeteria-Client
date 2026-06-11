@@ -231,7 +231,7 @@ const Registration = () => {
                     </div>
                 </form>
             </div>
-            <ToastContainer />
+            <ToastContainer autoClose={2000} />
         </div>
     );
 };

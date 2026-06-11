@@ -155,7 +155,7 @@ const FoodCategory = ({ title, items }) => {
                     );
                 })}
             </div>
-            <ToastContainer />
+            <ToastContainer autoClose={2000} />
         </div>
     );
 };
