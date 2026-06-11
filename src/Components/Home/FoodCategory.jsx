@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AddToCartContext } from './Home';
 import { SearchContext } from './SearchContext';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Button from '../Shared/Button';
 import 'react-toastify/dist/ReactToastify.css';
 

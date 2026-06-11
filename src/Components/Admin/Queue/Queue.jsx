@@ -256,6 +256,7 @@ const Queue = () => {
         const normalizedNextStatus = normalizeStatus(status);
         let movedOrder = null;
         const normalizedOrderId = getOrderId(orderId);
+        let currentOrderStatus = 'Placed';
 
         setActiveOrders((prev) => {
             const target = prev.find((order) => getOrderId(order._id) === normalizedOrderId);
@@ -263,12 +264,8 @@ const Queue = () => {
                 return prev;
             }
 
-            if (normalizedNextStatus === 'Ready') {
-                return prev.map((order) => {
-                    if (getOrderId(order._id) !== normalizedOrderId) return order;
-                    return normalizeOrder({ ...order, status: 'Ready' });
-                });
-            }
+            currentOrderStatus = normalizeStatus(target.status);
+            const remaining = prev.filter((order) => getOrderId(order._id) !== normalizedOrderId);
 
             if (normalizedNextStatus === 'Completed') {
                 movedOrder = normalizeOrder({
@@ -278,8 +275,10 @@ const Queue = () => {
                     queue_position: null,
                     estimated_waiting_minutes: 0
                 });
+                return recalculateActiveQueue(remaining);
+            }
 
-                const remaining = prev.filter((order) => getOrderId(order._id) !== normalizedOrderId);
+            if (normalizedNextStatus === 'Cancelled') {
                 return recalculateActiveQueue(remaining);
             }
 
@@ -291,19 +290,20 @@ const Queue = () => {
         }
 
         setStats((prev) => {
-            if (normalizedNextStatus === 'Ready') {
-                return {
-                    ...prev,
-                    pendingOrders: Math.max((prev.pendingOrders || 0) - 1, 0),
-                    readyOrders: (prev.readyOrders || 0) + 1
-                };
-            }
-
             if (normalizedNextStatus === 'Completed') {
                 return {
                     ...prev,
-                    readyOrders: Math.max((prev.readyOrders || 0) - 1, 0),
+                    pendingOrders: Math.max((prev.pendingOrders || 0) - (currentOrderStatus === 'Placed' ? 1 : 0), 0),
+                    readyOrders: Math.max((prev.readyOrders || 0) - (currentOrderStatus === 'Ready' ? 1 : 0), 0),
                     completedOrders: (prev.completedOrders || 0) + 1
+                };
+            }
+
+            if (normalizedNextStatus === 'Cancelled') {
+                return {
+                    ...prev,
+                    pendingOrders: Math.max((prev.pendingOrders || 0) - (currentOrderStatus === 'Placed' ? 1 : 0), 0),
+                    readyOrders: Math.max((prev.readyOrders || 0) - (currentOrderStatus === 'Ready' ? 1 : 0), 0)
                 };
             }
 
@@ -344,12 +344,6 @@ const Queue = () => {
         } finally {
             setUpdatingStatus(false);
         }
-    };
-
-    const handleAdminCompleteOverride = async (orderId) => {
-        const confirmed = window.confirm('This should normally be completed by customer. Do you want admin override?');
-        if (!confirmed) return;
-        updateOrderStatus(orderId, 'Completed');
     };
 
     const handleSearchByToken = async () => {
@@ -535,8 +529,8 @@ const Queue = () => {
                         <p className="text-sm text-gray-500 mb-3">Queue Position: #{selectedOrder.queue_position}</p>
 
                         <div className="mb-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
-                            <p><strong>Admin Flow:</strong> Set <strong>Ready to Pick</strong>.</p>
-                            <p><strong>Completion:</strong> Customer should press <strong>Mark as Received</strong> from customer queue.</p>
+                            <p><strong>Admin Flow:</strong> Complete or cancel the order.</p>
+                            <p><strong>Completion:</strong> Customer may also mark their order complete from the customer queue.</p>
                         </div>
 
                         <ul className="space-y-2 max-h-60 overflow-y-auto mb-4">
@@ -549,30 +543,21 @@ const Queue = () => {
                         </ul>
 
                         <div className="flex gap-3 justify-end">
-                            {selectedOrder.status === 'Placed' && (
-                                <Button
-                                    variant="warning"
-                                    isLoading={updatingStatus}
-                                    onClick={() => updateOrderStatus(selectedOrder._id, 'Ready')}
-                                >
-                                    Mark Ready to Pick
-                                </Button>
-                            )}
-                            {selectedOrder.status === 'Ready' && (
+                            {(selectedOrder.status === 'Placed' || selectedOrder.status === 'Ready') && (
                                 <>
                                     <Button
-                                        variant="outline"
-                                        disabled
-                                        title="Customer will confirm completion from their queue page"
+                                        variant="danger"
+                                        isLoading={updatingStatus}
+                                        onClick={() => updateOrderStatus(selectedOrder._id, 'Cancelled')}
                                     >
-                                        Waiting for Customer Confirmation
+                                        Cancel Order
                                     </Button>
                                     <Button
                                         variant="success"
                                         isLoading={updatingStatus}
-                                        onClick={() => handleAdminCompleteOverride(selectedOrder._id)}
+                                        onClick={() => updateOrderStatus(selectedOrder._id, 'Completed')}
                                     >
-                                        Completed (Admin Override)
+                                        Complete Order
                                     </Button>
                                 </>
                             )}

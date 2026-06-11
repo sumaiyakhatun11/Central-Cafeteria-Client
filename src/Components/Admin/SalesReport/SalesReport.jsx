@@ -537,8 +537,8 @@ const SalesReport = () => {
               {/* Download Button */}
 
               <Button
-                variant="accent"
-                className="gap-2"
+                variant="info"
+                className="gap-2 bg-blue-600 hover:bg-blue-800"
                 onClick={handleDownload}
                 disabled={isDownloadDisabled()}
                 isLoading={isDownloading}

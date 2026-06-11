@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../Authentication/AuthProvider';
 import { User2, Coins } from 'lucide-react';
 import { MdOutlineShoppingCart } from 'react-icons/md';
-import { AiOutlineLogout, AiOutlineHistory } from "react-icons/ai"; // Added AiOutlineHistory
+import { AiOutlineLogout, AiOutlineHistory, AiOutlineLogin } from "react-icons/ai"; // Added AiOutlineHistory and AiOutlineLogin
 import { FiHome } from "react-icons/fi";
 import CartDrawer from './CartDrawer';
 import AddCoinModal from './AddCoinModal';
@@ -104,14 +104,14 @@ const StatusBar = () => {
                 // Existing user specific StatusBar content
                 <div className='w-full bg-red-700 py-2 px-3 md:px-5 flex justify-between items-center gap-2'>
 
-                    {/* User ID */}
-                    {user && (
-                        <div className='text-sm md:text-xl font-medium text-white flex-shrink-0'>
-                            <span className='hidden sm:inline'>ID: </span><span className=''>{user.userId}</span>
-                        </div>
-                    )}
-
                     <div className='flex items-center gap-2 md:gap-4 overflow-hidden'>
+                        {/* User ID */}
+                        {user && (
+                            <div className='text-sm md:text-xl font-medium text-white flex-shrink-0'>
+                                <span className='hidden sm:inline'>ID: </span><span className=''>{user.userId}</span>
+                            </div>
+                        )}
+
                         {/* Queue / Home Icon */}
                         <div
                             onClick={() => location.pathname === '/queue' ? navigate('/') : navigate('/queue')}
@@ -134,49 +134,60 @@ const StatusBar = () => {
                                 </>
                             )}
                         </div>
+                    </div>
 
-                        {/* Right-side Actions */}
-                        <div className="flex gap-2 md:gap-3 items-center ml-auto">
-                            {/* User specific actions */}
-                            {
-                                user && user.role !== 'admin' &&
-                                <>
-                                    {/* Event History Icon */}
-                                    <div
-                                        className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors'
-                                        onClick={toggleEventHistoryModal}
-                                        title="Event History"
-                                    >
-                                        <AiOutlineHistory className='text-lg md:text-2xl' />
-                                    </div>
-                                    {/* Coin Icon */}
-                                    <div
-                                        className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors'
-                                        onClick={toggleAddCoinModal}
-                                        title="Add Coins"
-                                    >
-                                        <Coins className='text-lg md:text-2xl' />
-                                    </div>
-                                    {/* Cart */}
-                                    <div
-                                        className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors relative'
-                                        onClick={toggleCart}
-                                        title="Cart"
-                                    >
-                                        <MdOutlineShoppingCart className='text-lg md:text-2xl' />
-                                    </div>
-                                    {/* Logout Button for non-admin users */}
-                                    <Button
-                                        onClick={handleLogout}
-                                        variant="primary"
-                                        className='!p-1.5 md:!p-2 !rounded-full text-lg md:text-xl font-bold'
-                                        title="Logout"
-                                    >
-                                        <AiOutlineLogout />
-                                    </Button>
-                                </>
-                            }
-                        </div>
+                    {/* Right-side Actions */}
+                    <div className="flex gap-2 md:gap-3 items-center">
+                        {/* User specific actions */}
+                        {user && user.role !== 'admin' && (
+                            <>
+                                {/* Event History Icon */}
+                                <div
+                                    className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors'
+                                    onClick={toggleEventHistoryModal}
+                                    title="Event History"
+                                >
+                                    <AiOutlineHistory className='text-lg md:text-2xl' />
+                                </div>
+                                {/* Coin Icon */}
+                                <div
+                                    className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors'
+                                    onClick={toggleAddCoinModal}
+                                    title="Add Coins"
+                                >
+                                    <Coins className='text-lg md:text-2xl' />
+                                </div>
+                                {/* Cart */}
+                                <div
+                                    className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors relative'
+                                    onClick={toggleCart}
+                                    title="Cart"
+                                >
+                                    <MdOutlineShoppingCart className='text-lg md:text-2xl' />
+                                </div>
+                                {/* Logout Button for non-admin users */}
+                                <Button
+                                    onClick={handleLogout}
+                                    variant="primary"
+                                    className='!p-1.5 md:!p-2 !rounded-full text-lg md:text-xl font-bold'
+                                    title="Logout"
+                                >
+                                    <AiOutlineLogout />
+                                </Button>
+                            </>
+                        )}
+
+                        {/* Login button for unauthenticated users */}
+                        {!user && (
+                            <Button
+                                onClick={() => navigate('/login')}
+                                variant="primary"
+                                className='!p-2 !rounded-full text-white'
+                                title="Login"
+                            >
+                                <AiOutlineLogin className='text-lg md:text-xl' />
+                            </Button>
+                        )}
                     </div>
                 </div>
             )}

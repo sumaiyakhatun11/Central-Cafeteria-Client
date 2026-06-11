@@ -81,7 +81,7 @@ const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, current
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${admin._id}`, {
+            const res = await fetch(`${API_BASE_URL}/users/${admin._id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -111,7 +111,7 @@ const AdminDetailsModal = ({ isOpen, onClose, admin, onSuperAdminToggle, current
         if (window.confirm('Are you sure you want to delete this admin? This action cannot be undone.')) {
             setLoading(true);
             try {
-                const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${admin._id}`, {
+                const res = await fetch(`${API_BASE_URL}/users/${admin._id}`, {
                     method: 'DELETE'
                 });
 

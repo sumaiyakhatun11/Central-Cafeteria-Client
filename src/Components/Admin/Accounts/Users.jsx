@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../../Shared/Spinner';
 import Button from '../../Shared/Button';
+import { API_BASE_URL } from '../../../utils/api';
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -16,7 +17,7 @@ const Users = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/users');
+            const res = await fetch(`${API_BASE_URL}/users?limit=1000`);
             const data = await res.json();
             if (res.ok) {
                 setUsers(data.data.filter(user => !user.isadmin));
@@ -38,7 +39,7 @@ const Users = () => {
     const handleVerify = async () => {
         if (!selectedUser) return;
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}/verify`, {
+            const res = await fetch(`${API_BASE_URL}/users/${selectedUser._id}/verify`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ verified: true })
@@ -61,7 +62,7 @@ const Users = () => {
         if (!selectedUser) return;
 
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}/verify`, {
+            const res = await fetch(`${API_BASE_URL}/users/${selectedUser._id}/verify`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ verified: false })
@@ -84,7 +85,7 @@ const Users = () => {
         const newStatus = !selectedUser.privileged;
 
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}/privileged`, {
+            const res = await fetch(`${API_BASE_URL}/users/${selectedUser._id}/privileged`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ privileged: newStatus })
@@ -104,7 +105,7 @@ const Users = () => {
     };
     const handleDeleteUser = async () => {
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedUser._id}`, {
+            const res = await fetch(`${API_BASE_URL}/users/${selectedUser._id}`, {
                 method: 'DELETE',
             });
 

@@ -4,6 +4,7 @@ import { useAuth } from '../../Authentication/AuthProvider';
 import AddAdminModal from './AddAdminModal';
 import AdminDetailsModal from './AdminDetailsModal';
 import Button from '../../Shared/Button';
+import { API_BASE_URL } from '../../../utils/api';
 
 const Admins = () => {
     const { user } = useAuth();
@@ -14,7 +15,7 @@ const Admins = () => {
 
     const fetchAdmins = async () => {
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/users');
+            const res = await fetch(`${API_BASE_URL}/users`);
             const data = await res.json();
             if (res.ok) {
                 setAdmins(data.data.filter(user => user.isadmin));
@@ -35,7 +36,7 @@ const Admins = () => {
         const newStatus = !selectedAdmin.isSuperAdmin;
 
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/users/${selectedAdmin._id}/superadmin`, {
+            const res = await fetch(`${API_BASE_URL}/users/${selectedAdmin._id}/superadmin`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isSuperAdmin: newStatus })

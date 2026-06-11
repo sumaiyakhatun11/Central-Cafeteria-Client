@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 import { FaPlus, FaMinus } from "react-icons/fa6";
 import Button from './Button';
+import Spinner from './Spinner';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -20,6 +21,7 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
     const [coinValue, setCoinValue] = useState(5); // Default value
     const { user } = useAuth();
     const [tableNumber, setTableNumber] = useState('');
+    const [selectedCounter, setSelectedCounter] = useState('');
 
     const fetchCoinBalance = async (id) => {
         try {
@@ -68,6 +70,12 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
             fetchCoinValue(); // Initial fetch
             setUsePrivilege(false);
             setPayWithCash(true);
+            if (user && (user.role === 'student' || user.role === 'staff')) {
+                const storedCounter = localStorage.getItem('selectedCounter');
+                if (storedCounter) {
+                    setSelectedCounter(storedCounter);
+                }
+            }
             interval = setInterval(fetchCoinValue, 3000); // Poll every 3 seconds
         }
 
@@ -196,15 +204,22 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
             toast.error('Please enter table number for teacher orders.');
             return;
         }
+        if (user && (user.role === 'student' || user.role === 'staff') && !selectedCounter) {
+            toast.error('Please choose a counter before placing your order.');
+            return;
+        }
         try {
             const res = await fetch(`${API_BASE_URL}/order/queue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, usePrivilege, payWithCoins, payWithCash, tableNumber })
+                body: JSON.stringify({ userId, usePrivilege, payWithCoins, payWithCash, tableNumber, counter: selectedCounter })
             });
 
             const data = await res.json();
             if (res.ok) {
+                if (selectedCounter) {
+                    localStorage.setItem('selectedCounter', selectedCounter);
+                }
                 if (user && user.role === 'teacher') {
                     toast.success('Order placed, wait for a while');
                 } else {
@@ -315,6 +330,42 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                     </div>
                 )}
 
+                {user && (user.role === 'student' || user.role === 'staff') && (
+                    <div className="mt-3">
+                        <p className="font-medium mb-2">Choose Counter</p>
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <label className="inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="counter"
+                                    value="1"
+                                    checked={selectedCounter === '1'}
+                                    onChange={(e) => {
+                                        setSelectedCounter(e.target.value);
+                                        localStorage.setItem('selectedCounter', e.target.value);
+                                    }}
+                                    className="accent-red-500"
+                                />
+                                Counter 1
+                            </label>
+                            <label className="inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="counter"
+                                    value="2"
+                                    checked={selectedCounter === '2'}
+                                    onChange={(e) => {
+                                        setSelectedCounter(e.target.value);
+                                        localStorage.setItem('selectedCounter', e.target.value);
+                                    }}
+                                    className="accent-red-500"
+                                />
+                                Counter 2 (Female)
+                            </label>
+                        </div>
+                    </div>
+                )}
+
                 <div className="mt-4">
                     <label className={`flex items-center gap-2 text-sm ${coinBalance <= 0 ? 'cursor-not-allowed' : ''}`}>
                         <input
@@ -350,7 +401,10 @@ const CartDrawer = ({ isOpen, onClose, userId, fetchQueue }) => {
                     fullWidth
                     className="mt-2"
                     onClick={placeOrder}
-                    disabled={user && user.role === 'teacher' && (!tableNumber || tableNumber.trim() === '')}
+                    disabled={
+                        (user && user.role === 'teacher' && (!tableNumber || tableNumber.trim() === '')) ||
+                        (user && (user.role === 'student' || user.role === 'staff') && !selectedCounter)
+                    }
                 >
                     Place Order
                 </Button>

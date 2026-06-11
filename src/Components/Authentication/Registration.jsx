@@ -153,7 +153,7 @@ const Registration = () => {
     };
 
     return (
-        <div className='w-full py-10 min-h-screen flex text-black justify-center items-center relative overflow-hidden'>
+        <div className='w-full text-black min-h-screen flex justify-center items-start lg:items-center relative overflow-auto py-10'>
             <div
                 className='absolute inset-0 bg-cover opacity-50 bg-center filter blur-sm z-0'
                 style={{ backgroundImage: `url(https://i.ibb.co/fzngpwS3/Whats-App-Image-2025-06-02-at-15-35-28-8e7f8eb2.jpg)` }}
@@ -167,30 +167,30 @@ const Registration = () => {
                 onCapture={handleCapture}
             />
 
-            <div className='z-20 bg-white p-8 rounded-lg shadow-xl w-full lg:max-w-[500px]'>
-                <form onSubmit={handleSubmit} className='flex flex-col items-center'>
+            <div className='z-20 bg-white p-8 sm:p-10 rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden'>
+                <form onSubmit={handleSubmit} className='flex flex-col items-center w-full space-y-4'>
                     <h2 className='text-3xl border-b-2 pb-2 px-5 border-gray-600 tinos-regular mb-6'>Register</h2>
 
                     {/* ID Card Front */}
-                    <div className="mb-4 w-full">
-                        <label className="block text-gray-700 font-bold mb-2">ID Card (Front)</label>
-                        <div className="flex gap-2">
+                    <div className="mb-4 w-full rounded-2xl border border-gray-200 p-4">
+                        <label className="block text-gray-700 font-bold mb-3">ID Card (Front)</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Button type="button" onClick={() => frontIdRef.current.click()} variant="outline" fullWidth>Upload</Button>
                             <Button type="button" onClick={() => { setCapturingSide('front'); setIsCameraOpen(true); }} variant="outline" fullWidth>Capture</Button>
                         </div>
                         <input type="file" ref={frontIdRef} accept="image/*" onChange={(e) => onFileChange(e, 'front')} className="hidden" />
-                        {formData.idCardFrontUrl && <img src={formData.idCardFrontUrl} alt="ID Card Front Preview" className="w-full h-40 object-cover mt-2 rounded" />}
+                        {formData.idCardFrontUrl && <img src={formData.idCardFrontUrl} alt="ID Card Front Preview" className="w-full h-40 object-cover mt-3 rounded-xl" />}
                     </div>
 
                     {/* ID Card Back */}
-                    <div className="mb-4 w-full">
-                        <label className="block text-gray-700 font-bold mb-2">ID Card (Back)</label>
-                        <div className="flex gap-2">
+                    <div className="mb-4 w-full rounded-2xl border border-gray-200 p-4">
+                        <label className="block text-gray-700 font-bold mb-3">ID Card (Back)</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Button type="button" onClick={() => backIdRef.current.click()} variant="outline" fullWidth>Upload</Button>
                             <Button type="button" onClick={() => { setCapturingSide('back'); setIsCameraOpen(true); }} variant="outline" fullWidth>Capture</Button>
                         </div>
                         <input type="file" ref={backIdRef} accept="image/*" onChange={(e) => onFileChange(e, 'back')} className="hidden" />
-                        {formData.idCardBackUrl && <img src={formData.idCardBackUrl} alt="ID Card Back Preview" className="w-full h-40 object-cover mt-2 rounded" />}
+                        {formData.idCardBackUrl && <img src={formData.idCardBackUrl} alt="ID Card Back Preview" className="w-full h-40 object-cover mt-3 rounded-xl" />}
                     </div>
 
                     <Input label="Name" type="text" name="name" value={formData.name} onChange={handleChange} />

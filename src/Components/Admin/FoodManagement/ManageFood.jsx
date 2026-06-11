@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../../Shared/Spinner';
 import Button from '../../Shared/Button';
+import { API_BASE_URL } from '../../../utils/api';
 
 const ManageFood = () => {
     const [foods, setFoods] = useState([]);
@@ -21,7 +22,7 @@ const ManageFood = () => {
     const fetchFoods = async () => {
         setLoading(true);
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/foods');
+            const res = await fetch(`${API_BASE_URL}/foods`);
             const data = await res.json();
             if (res.ok) {
                 setFoods(data);
@@ -67,7 +68,7 @@ const ManageFood = () => {
 
     const handleSetAllAvailable = async () => {
         try {
-            const res = await fetch('https://central-cafetaria-server.vercel.app/foods/set-all-available', {
+            const res = await fetch(`${API_BASE_URL}/foods/set-all-available`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -88,7 +89,7 @@ const ManageFood = () => {
 
     const handleToggleAvailability = async (foodId, category, status) => {
         try {
-            const res = await fetch(`https://central-cafetaria-server.vercel.app/foods/${foodId}/availability`, {
+            const res = await fetch(`${API_BASE_URL}/foods/${foodId}/availability`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -116,7 +117,7 @@ const ManageFood = () => {
     const handleDelete = async (foodId) => {
         if (window.confirm('Are you sure you want to delete this item?')) {
             try {
-                const res = await fetch(`https://central-cafetaria-server.vercel.app/foods/${foodId}`, {
+                const res = await fetch(`${API_BASE_URL}/foods/${foodId}`, {
                     method: 'DELETE'
                 });
 

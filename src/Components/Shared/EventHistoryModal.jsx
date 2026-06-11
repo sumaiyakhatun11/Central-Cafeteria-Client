@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { FaTimes, FaDownload } from 'react-icons/fa'; // Added FaDownload
 import { toast } from 'react-toastify';
 import { jsPDF } from 'jspdf'; // Import jspdf
+import Button from './Button';
 import Spinner from './Spinner';
 
 const EventHistoryModal = ({ isOpen, onClose, userId }) => {

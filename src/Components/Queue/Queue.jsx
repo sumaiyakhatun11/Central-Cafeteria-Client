@@ -14,6 +14,12 @@ const Queue = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [selectedCounter, setSelectedCounter] = useState('');
+
+    const counterOptions = [
+        { value: '1', label: 'Counter 1' },
+        { value: '2', label: 'Counter 2 (Female)' }
+    ];
 
     const { user } = useAuth();
 
@@ -46,9 +52,11 @@ const Queue = () => {
         return Math.max((Number(queuePosition) || 1), 0) * MINUTES_PER_ORDER;
     };
 
-    const normalizeOrder = (order, index = 0) => {
+    const normalizeOrder = (order, index = 0, queuePositionOverride) => {
         const status = normalizeStatus(order?.status);
-        const queuePosition = Number(order?.queue_position) > 0 ? Number(order.queue_position) : index + 1;
+        const queuePosition = Number(queuePositionOverride) > 0
+            ? Number(queuePositionOverride)
+            : (Number(order?.queue_position) > 0 ? Number(order.queue_position) : index + 1);
 
         return {
             ...order,
@@ -78,8 +86,22 @@ const Queue = () => {
     };
 
     useEffect(() => {
-        fetchQueue();
+        if (user && (user.role === 'student' || user.role === 'staff')) {
+            const storedCounter = localStorage.getItem('selectedCounter') || '';
+            setSelectedCounter(storedCounter);
+        }
     }, [user?.id]);
+
+    const handleCounterSelect = (counter) => {
+        setSelectedCounter(counter);
+        if (user && (user.role === 'student' || user.role === 'staff')) {
+            localStorage.setItem('selectedCounter', counter);
+        }
+    };
+
+    useEffect(() => {
+        fetchQueue();
+    }, [user?.id, selectedCounter]);
 
     useEffect(() => {
         const stream = new EventSource(`${API_BASE_URL}/queue/stream`);
@@ -88,28 +110,32 @@ const Queue = () => {
             try {
                 const payload = JSON.parse(event.data || '{}');
                 const activeQueue = (payload.activeQueue || [])
+                    .filter((order) => isActiveStatus(normalizeStatus(order?.status)))
                     .sort((a, b) => {
                         const aPos = Number(a?.queue_position) || Number.MAX_SAFE_INTEGER;
                         const bPos = Number(b?.queue_position) || Number.MAX_SAFE_INTEGER;
                         return aPos - bPos;
-                    })
-                    .map((order, index) => normalizeOrder(order, index))
-                    .filter((order) => isActiveStatus(order.status));
+                    });
 
-                setOriginalQueue(activeQueue);
+                const filteredActiveQueue = (user && (user.role === 'student' || user.role === 'staff') && selectedCounter)
+                    ? activeQueue.filter((order) => String(order.counter) === String(selectedCounter))
+                    : activeQueue;
 
-                if (view === 'myOrdersTop') {
-                    const sortedData = [...activeQueue].sort((a, b) => {
+                const normalizedQueue = filteredActiveQueue.map((order, index) => normalizeOrder(order, index, index + 1));
+
+                setOriginalQueue(normalizedQueue);
+
+                const dataToUse = view === 'myOrdersTop'
+                    ? [...normalizedQueue].sort((a, b) => {
                         const aIsUser = String(a.userId) === String(user?.id);
                         const bIsUser = String(b.userId) === String(user?.id);
                         if (aIsUser && !bIsUser) return -1;
                         if (!aIsUser && bIsUser) return 1;
                         return a.queue_position - b.queue_position;
-                    });
-                    setQueueData(sortedData);
-                } else {
-                    setQueueData(activeQueue);
-                }
+                    })
+                    : normalizedQueue;
+
+                setQueueData(dataToUse);
 
                 setLoading(false);
             } catch (error) {
@@ -127,7 +153,7 @@ const Queue = () => {
             stream.removeEventListener('queue_update', onQueueUpdate);
             stream.close();
         };
-    }, [user?.id, view]);
+    }, [user?.id, view, selectedCounter]);
 
     const fetchQueue = async () => {
         try {
@@ -135,16 +161,22 @@ const Queue = () => {
             const res = await fetch(`${API_BASE_URL}/latqueue`);
             const data = await res.json();
             if (res.ok) {
-                const dataWithSerial = (data.data || [])
+                const allActiveOrders = (data.data || [])
+                    .filter((order) => isActiveStatus(normalizeStatus(order?.status)))
                     .sort((a, b) => {
                         const aPos = Number(a?.queue_position) || Number.MAX_SAFE_INTEGER;
                         const bPos = Number(b?.queue_position) || Number.MAX_SAFE_INTEGER;
                         return aPos - bPos;
-                    })
-                    .map((order, index) => normalizeOrder(order, index))
-                    .filter((order) => isActiveStatus(order.status));
-                setOriginalQueue(dataWithSerial);
-                setQueueData(dataWithSerial);
+                    });
+
+                const filteredOrders = (user && (user.role === 'student' || user.role === 'staff') && selectedCounter)
+                    ? allActiveOrders.filter((order) => String(order.counter) === String(selectedCounter))
+                    : allActiveOrders;
+
+                const normalizedOrders = filteredOrders.map((order, index) => normalizeOrder(order, index, index + 1));
+
+                setOriginalQueue(normalizedOrders);
+                setQueueData(normalizedOrders);
                 setView('original');
             } else {
                 toast.error(data.message || 'Failed to fetch queue.');
@@ -177,31 +209,31 @@ const Queue = () => {
         }
     };
 
-    const handleMarkAsReceived = async () => {
-        if (!selectedOrder?._id || !user?.id) return;
+    const handleMarkAsComplete = async () => {
+        if (!selectedOrder?._id) return;
 
         try {
             setUpdatingStatus(true);
             const orderId = getOrderId(selectedOrder._id);
-            const res = await fetch(`${API_BASE_URL}/order/${orderId}/received`, {
+            const res = await fetch(`${API_BASE_URL}/order/${orderId}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id })
+                body: JSON.stringify({ status: 'Completed' })
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-                toast.error(data.message || 'Failed to mark order as received.');
+                toast.error(data.message || 'Failed to mark order as complete.');
                 return;
             }
 
-            toast.success('Order marked as received.');
+            toast.success('Order marked as complete.');
             setSelectedOrder(null);
             fetchQueue();
         } catch (error) {
-            console.error('Mark as received error:', error);
-            toast.error('Failed to mark order as received.');
+            console.error('Mark as complete error:', error);
+            toast.error('Failed to mark order as complete.');
         } finally {
             setUpdatingStatus(false);
         }
@@ -217,23 +249,41 @@ const Queue = () => {
         <div className="p-6 max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-white mb-6 text-center">Current Queue</h2>
 
-            <div className="flex justify-center items-center gap-4 mb-6">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className={view === 'original' ? 'bg-red-600 text-white border-red-800' : ''}
-                    onClick={() => handleViewChange('original')}
-                >
-                    Original Queue
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className={view === 'myOrdersTop' ? 'bg-red-600 text-white border-red-800' : ''}
-                    onClick={() => handleViewChange('myOrdersTop')}
-                >
-                    My Orders Top
-                </Button>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+                {user && (user.role === 'student' || user.role === 'staff') && (
+                    <div className="flex flex-wrap items-center gap-3 bg-white/10 rounded-xl p-3 shadow-sm">
+                        <p className="text-white font-medium">Select Counter:</p>
+                        {counterOptions.map((option) => (
+                            <Button
+                                key={option.value}
+                                variant={selectedCounter === option.value ? 'solid' : 'outline'}
+                                size="sm"
+                                className={selectedCounter === option.value ? 'bg-red-600 text-white border-red-800' : ''}
+                                onClick={() => handleCounterSelect(option.value)}
+                            >
+                                {option.label}
+                            </Button>
+                        ))}
+                    </div>
+                )}
+                <div className="flex flex-wrap justify-center items-center gap-4">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className={view === 'original' ? 'bg-red-600 text-white border-red-800' : ''}
+                        onClick={() => handleViewChange('original')}
+                    >
+                        Original Queue
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className={view === 'myOrdersTop' ? 'bg-red-600 text-white border-red-800' : ''}
+                        onClick={() => handleViewChange('myOrdersTop')}
+                    >
+                        My Orders Top
+                    </Button>
+                </div>
             </div>
 
             {loading ? (
@@ -253,6 +303,7 @@ const Queue = () => {
                             >
                                 <p className="text-lg font-bold text-red-600">Token: {order.token}</p>
                                 <p className="text-sm text-gray-600">Queue Position: #{order.queue_position}</p>
+                                <p className="text-sm text-gray-600">Counter: {order.counter || 'N/A'}</p>
                                 <p className="text-sm text-gray-600">Estimated Wait: {order.estimated_waiting_minutes || 0} min</p>
 
                                 {isCurrentUser && (
@@ -323,14 +374,14 @@ const Queue = () => {
                             )}
                         </div>
 
-                        {selectedOrder.status === 'Ready' && (
+                        {(selectedOrder.status !== 'Completed' && selectedOrder.status !== 'Cancelled') && (
                             <Button
                                 variant="success"
                                 fullWidth
                                 isLoading={updatingStatus}
-                                onClick={handleMarkAsReceived}
+                                onClick={handleMarkAsComplete}
                             >
-                                {updatingStatus ? 'Updating...' : 'Mark as Received'}
+                                {updatingStatus ? 'Updating...' : 'Mark as Complete'}
                             </Button>
                         )}
                     </div>
