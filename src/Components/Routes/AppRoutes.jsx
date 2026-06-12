@@ -5,6 +5,7 @@ import Registration from '../Authentication/Registration.jsx';
 import Home from '../Home/Home.jsx';
 import CategoryMenu from '../Home/CategoryMenu.jsx';
 import Queue from '../Queue/Queue.jsx';
+import Profile from '../Authentication/Profile.jsx';
 
 // Admin Imports
 import AdminRegistration from '../Admin/Authentication/AdminRegistration.jsx';
@@ -34,7 +35,7 @@ const CATEGORY_CONFIG = {
 
 const API_BASES = [
   import.meta.env.VITE_API_URL,
-  'http://localhost:5000',
+  'https://central-cafetaria-server-tau.vercel.app',
   'https://central-cafetaria-server.vercel.app',
 ].filter(Boolean);
 
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: '/queue',
         element: <Queue />,
+      },
+      {
+        path: '/profile',
+        element: <Profile />,
       },
       {
         path: '/login',

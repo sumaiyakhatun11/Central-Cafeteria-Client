@@ -11,7 +11,7 @@ const INITIAL_FORM = {
 
 const API_BASES = [
     'https://central-cafetaria-server.vercel.app',
-    'http://localhost:5000',
+    'https://central-cafetaria-server-tau.vercel.app',
 ];
 const LOCAL_MATERIALS_KEY = 'inventoryRawMaterials';
 

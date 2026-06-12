@@ -77,6 +77,7 @@ const Footer = () => {
                                         <>
                                             <li><Button variant="link" className="text-left w-full" onClick={() => window.scrollTo(0,0)}>My Event History</Button></li>
                                             <li><Button variant="link" className="text-left w-full" onClick={() => window.scrollTo(0,0)}>Coin Status</Button></li>
+                                            <li><NavLink to="/profile" className="hover:text-red-400 hover:underline transition-colors">Profile</NavLink></li>
                                             <li><Button variant="link" className="text-left w-full" onClick={handleLogout}>Logout</Button></li>
                                         </>
                                     )}

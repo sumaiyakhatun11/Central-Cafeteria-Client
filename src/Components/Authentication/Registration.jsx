@@ -6,7 +6,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import CameraModal from './CameraModal'; // Make sure the path is correct
 import Button from '../Shared/Button';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://central-cafetaria-server-tau.vercel.app';
 
 const Registration = () => {
     const [formData, setFormData] = useState({

@@ -12,7 +12,7 @@ import Spinner from './Spinner';
 import Button from './Button';
 import EventHistoryModal from './EventHistoryModal'; // Will create this file
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://central-cafetaria-server-tau.vercel.app';
 
 const StatusBar = () => {
     const { user, logout } = useAuth();
@@ -108,7 +108,7 @@ const StatusBar = () => {
                         {/* User ID */}
                         {user && (
                             <div className='text-sm md:text-xl font-medium text-white flex-shrink-0'>
-                                <span className='hidden sm:inline'>ID: </span><span className=''>{user.userId}</span>
+                                <span className='hidden sm:inline'>ID: </span><span className=''>{user.userId || user.id}</span>
                             </div>
                         )}
 
@@ -125,10 +125,7 @@ const StatusBar = () => {
                             ) : (
                                 <>
                                     <MdOutlinePeopleAlt className='text-xl md:text-2xl' />
-                                    {
-                                        !user &&
-                                        <span className="text-xs md:text-base hidden sm:inline">Orders Queue</span>
-                                    }
+                                    <span className="text-sm md:text-xl font-medium hidden sm:inline">Queue</span>
                                     <span className='text-sm md:text-xl font-bold'>{queueData.length}</span>
                                     {loading && <Spinner size="w-4 h-4 md:w-5 md:h-5" />}
                                 </>
@@ -165,6 +162,22 @@ const StatusBar = () => {
                                 >
                                     <MdOutlineShoppingCart className='text-lg md:text-2xl' />
                                 </div>
+                                {/* Profile Link */}
+                                <NavLink
+                                    to="/profile"
+                                    className='p-1.5 md:p-2 bg-red-500 rounded-full cursor-pointer hover:bg-red-600 transition-colors text-white flex items-center justify-center'
+                                    title="Profile"
+                                >
+                                    {user?.profilePicture ? (
+                                        <img
+                                            src={user.profilePicture}
+                                            alt="Profile"
+                                            className="h-6 w-6 rounded-full border border-white/70 shadow-sm object-cover md:h-8 md:w-8 hover:border-white transition-colors"
+                                        />
+                                    ) : (
+                                        <User2 className='text-lg md:text-2xl' />
+                                    )}
+                                </NavLink>
                                 {/* Logout Button for non-admin users */}
                                 <Button
                                     onClick={handleLogout}

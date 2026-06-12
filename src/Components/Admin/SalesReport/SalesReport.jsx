@@ -7,7 +7,7 @@ import Button from '../../Shared/Button';
 
 const API_BASES = [
   import.meta.env.VITE_API_URL,
-  'http://localhost:5000',
+  'https://central-cafetaria-server-tau.vercel.app',
   'https://central-cafetaria-server.vercel.app',
 ].filter(Boolean);
 
